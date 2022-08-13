@@ -1,0 +1,28 @@
+{
+  "name": "1--express-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "Ahmed Ayman Ahmed Ibrahim",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parse": "^0.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "easy-rbac": "^3.2.0",
+    "express": "^4.17.3",
+    "http-status-codes": "^2.2.0",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.3.0",
+    "rbac": "^5.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
