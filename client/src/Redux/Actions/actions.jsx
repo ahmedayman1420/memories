@@ -1,64 +1,74 @@
 import {
   deletePostAPI,
   editPostAPI,
-  getAllPosts,
-  submitPost,
+  getAllPostsAPI,
+  likePostAPI,
+  addPostAPI,
 } from "../../APIs/APIs";
+import {ADD_POST, DELETE_POST, EDIT_POST, EDIT_POST_ID, ERROR_RESET, GET_POSTS, LIKE_POST, RESET_ID} from "./actionStrings";
 
-export const addPost = (post) => async (dispatch) => {
-  const res = await submitPost(post);
+export const addPostAction = (post) => async (dispatch) => {
+  const res = await addPostAPI(post);
   dispatch({
-    type: "ADD_POST",
+    type: ADD_POST,
     payload: res.data.post,
   });
 };
 
-export const getPosts = () => async (dispatch) => {
-  const res = await getAllPosts();
+export const getPostsAction = () => async (dispatch) => {
+  const res = await getAllPostsAPI();
   dispatch({
-    type: "GET_POSTS",
+    type: GET_POSTS,
     payload: res.data.posts,
   });
 };
 
-export const editPost = (post) => async (dispatch) => {
+export const editPostACtion = (post) => async (dispatch) => {
   const res = await editPostAPI(post);
   dispatch({
-    type: "EDIT_POST",
+    type: EDIT_POST,
     payload: res.data.post,
   });
 };
 
-export const deletePost = (id) => async (dispatch) => {
+export const likePostAction = (id) => async (dispatch) => {
+  const res = await likePostAPI(id);
+  dispatch({
+    type: LIKE_POST,
+    payload: res.data.post,
+  });
+};
+
+export const deletePostAction = (id) => async (dispatch) => {
   const res = await deletePostAPI(id);
   dispatch({
-    type: "DELETE_POST",
+    type: DELETE_POST,
     payload: id,
   });
 };
 
-export const setEditPostId = (id) => async (dispatch) => {
+export const setEditPostIdAction = (id) => async (dispatch) => {
   dispatch({
-    type: "EDIT_POST_ID",
+    type: EDIT_POST_ID,
     payload: id,
   });
 };
-export const resetId = () => async (dispatch) => {
+export const resetIdACtion = () => async (dispatch) => {
   dispatch({
-    type: "RESET_ID",
+    type: RESET_ID,
   });
 };
 
-export const unexpectedError = (mes) => async (dispatch) => {
+export const unexpectedErrorAction = (mes) => async (dispatch) => {
   dispatch({
     type: mes,
     payload: { value: true, message: mes },
   });
 };
 
-export const errorReset = () => async (dispatch) => {
+export const errorResetAction = () => async (dispatch) => {
   dispatch({
-    type: "ERROR_RESET",
+    type: ERROR_RESET,
     payload: { value: false, message: "All is good" },
   });
 };

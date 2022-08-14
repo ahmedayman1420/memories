@@ -39,6 +39,11 @@ const userJoi = {
       id: joi.string().required(),
     }),
   },
+  likePostSchema: {
+    params: joi.object().required().keys({
+      id: joi.string().required(),
+    }),
+  },
 };
 
 /* ============= /// <==> Exports User Joi Validations <==> /// ============= */

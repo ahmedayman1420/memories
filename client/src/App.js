@@ -1,6 +1,6 @@
 import "./App.css";
 import { useSelector, useDispatch } from "react-redux";
-import { addPost } from "./Redux/Actions/actions";
+import { addPostAction } from "./Redux/Actions/actions";
 import Home from "./Components/Home/Home";
 
 function App() {

@@ -45,5 +45,12 @@ router.delete(
   postFunctions.deletePost
 );
 
+// like post api
+router.patch(
+  "/post/like/:id",
+  validateRequest(postSchemas.likePostSchema),
+  postFunctions.likePost
+);
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = router;

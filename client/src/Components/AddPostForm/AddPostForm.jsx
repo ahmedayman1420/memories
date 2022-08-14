@@ -3,13 +3,17 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addPost,
-  editPost,
-  errorReset,
-  resetId,
-  unexpectedError,
+  addPostAction,
+  editPostACtion,
+  errorResetAction,
+  resetIdACtion,
+  unexpectedErrorAction,
 } from "../../Redux/Actions/actions";
 import Alert from "react-bootstrap/Alert";
+import {
+  ERROR_ADD_POST,
+  ERROR_EDIT_POST,
+} from "../../Redux/Actions/actionStrings";
 
 function AddPostForm() {
   const dispatch = useDispatch();
@@ -60,22 +64,22 @@ function AddPostForm() {
         else return p[0] !== "";
       });
       if (result) {
-        await dispatch(errorReset());
-        await dispatch(addPost(post));
+        await dispatch(errorResetAction());
+        await dispatch(addPostAction(post));
         clearForm(e);
-      } else await dispatch(unexpectedError("ERROR_ADD_POST"));
+      } else await dispatch(unexpectedErrorAction(ERROR_ADD_POST));
     } else {
       let result = Object.values(post).every((p) => {
         if (typeof p === "string") return p !== "" && !/^\s/.test(p);
         else return p[0] !== "";
       });
       if (result) {
-        await dispatch(errorReset());
-        await dispatch(editPost(post));
-        dispatch(resetId());
+        await dispatch(errorResetAction());
+        await dispatch(editPostACtion(post));
+        dispatch(resetIdACtion());
         setEditState(false);
         clearForm(e);
-      } else await dispatch(unexpectedError("ERROR_EDIT_POST"));
+      } else await dispatch(unexpectedErrorAction(ERROR_EDIT_POST));
     }
     setWaiting(false);
   };

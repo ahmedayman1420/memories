@@ -11,12 +11,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Style from "./Post.module.scss";
 import moment from "moment";
-import { deletePost, setEditPostId } from "../../../Redux/Actions/actions";
+import {
+  deletePostAction,
+  likePostAction,
+  setEditPostIdAction,
+} from "../../../Redux/Actions/actions";
 
 function Post() {
   const posts = useSelector((state) => state.posts);
   const dispatch = useDispatch();
-  const [waiting, setWaiting] = useState(false);
+  const [waitingLike, setWaitingLike] = useState(false);
+  const [waitingDelete, setWaitingDelete] = useState(false);
+  const [deletedPostId, setdDletedPostId] = useState("");
+  const [editedPostId, setdEditedPostId] = useState("");
 
   return (
     <>
@@ -35,27 +42,45 @@ function Post() {
                   <ListGroup className="list-group-flush">
                     <ListGroup.Item className="d-flex justify-content-between ">
                       <Card.Text>
-                        <span>Like </span>
+                        <span>
+                          {(!waitingLike || editedPostId !== post._id) &&
+                            "Like "}
+                          {waitingLike &&
+                            editedPostId === post._id &&
+                            "Wait ... "}
+                        </span>
                         <FontAwesomeIcon
                           className={["text-primary", Style.icon].join(" ")}
                           size="lg"
                           icon={faThumbsUp}
+                          onClick={async () => {
+                            setWaitingLike(true);
+                            setdEditedPostId(post._id);
+                            await dispatch(likePostAction(post._id));
+                            setdEditedPostId("");
+                            setWaitingLike(false);
+                          }}
                         />
-                        <span> 0</span>
+                        <span> {post.likeCount}</span>
                       </Card.Text>
                       <Card.Text>
                         <span>
-                          {!waiting && "Delete "}
-                          {waiting && "Wait ... "}
+                          {(!waitingDelete || deletedPostId !== post._id) &&
+                            "Delete "}
+                          {waitingDelete &&
+                            deletedPostId === post._id &&
+                            "Wait ... "}
                         </span>
                         <FontAwesomeIcon
                           className={["text-danger", Style.icon].join(" ")}
                           size="lg"
                           icon={faTrashAlt}
                           onClick={async () => {
-                            setWaiting(true);
-                            await dispatch(deletePost(post._id));
-                            setWaiting(false);
+                            setWaitingDelete(true);
+                            setdDletedPostId(post._id);
+                            await dispatch(deletePostAction(post._id));
+                            setdDletedPostId("");
+                            setWaitingDelete(false);
                           }}
                         />
                       </Card.Text>
@@ -71,7 +96,7 @@ function Post() {
                         size="lg"
                         icon={faEllipsis}
                         onClick={() => {
-                          dispatch(setEditPostId(post._id));
+                          dispatch(setEditPostIdAction(post._id));
                         }}
                       />
                     </Card.Title>

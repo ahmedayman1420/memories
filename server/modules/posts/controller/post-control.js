@@ -76,7 +76,7 @@ const editPost = async (req, res) => {
 };
 
 /*
-//==// Delete Post: is the logic of '/post/delete/id' api that used to delete specific post.
+//==// Delete Post: is the logic of '/post/delete/:id' api that used to delete specific post.
 the response of this function in success ("Post deleted successfully"), in failure (show error message).
 */
 const deletePost = async (req, res) => {
@@ -84,7 +84,40 @@ const deletePost = async (req, res) => {
     let { id } = req.params;
 
     const data = await posts.findByIdAndDelete(id);
-    res.status(StatusCodes.OK).json({ Message: "Post deleted successfully", post: data });
+    res
+      .status(StatusCodes.OK)
+      .json({ Message: "Post deleted successfully", post: data });
+  } catch (error) {
+    console.log({ error });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+  }
+};
+
+/*
+//==// Like Post: is the logic of '/post/like/:id' api that used to Like specific post.
+the response of this function in success (updated post), in failure (show error message).
+*/
+const likePost = async (req, res) => {
+  try {
+    let { id } = req.params;
+    const oldPost = await posts.findById(id);
+    if (oldPost) {
+      const data = await posts.findByIdAndUpdate(
+        id,
+        {
+          likeCount: oldPost.likeCount + 1,
+        },
+        {
+          new: true,
+        }
+      );
+      res
+        .status(StatusCodes.OK)
+        .json({ Message: "Post Liked successfully", post: data });
+    } else
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ Message: "Post not found", post: "" });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -97,4 +130,5 @@ module.exports = {
   getPosts,
   editPost,
   deletePost,
+  likePost,
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getPosts } from "../../Redux/Actions/actions";
+import { getPostsAction } from "../../Redux/Actions/actions";
 import Post from "./Post/Post";
 
 function Posts() {
@@ -11,7 +11,7 @@ function Posts() {
   useEffect(() => {
     const fetchMyAPI = async () => {
       setWaiting(true);
-      await dispatch(getPosts());
+      await dispatch(getPostsAction());
       setWaiting(false);
     };
     fetchMyAPI();
