@@ -30,13 +30,14 @@ const userJoi = {
         message: joi.string().required(),
         tags: joi.array().items(joi.string()).required(),
       }),
-      params: joi
-      .object()
-      .required()
-      .keys({
-        id: joi.string().required(),
-      }),
-
+    params: joi.object().required().keys({
+      id: joi.string().required(),
+    }),
+  },
+  deletePostSchema: {
+    params: joi.object().required().keys({
+      id: joi.string().required(),
+    }),
   },
 };
 

@@ -37,5 +37,13 @@ router.put(
   validateRequest(postSchemas.editPostSchema),
   postFunctions.editPost
 );
+
+// delete post api
+router.delete(
+  "/post/delete/:id",
+  validateRequest(postSchemas.deletePostSchema),
+  postFunctions.deletePost
+);
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = router;

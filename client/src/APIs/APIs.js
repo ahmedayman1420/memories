@@ -43,3 +43,12 @@ export const editPostAPI = async (post) => {
     console.log(error);
   }
 };
+
+export const deletePostAPI = async (id) => {
+  try {
+    const res = await axios.delete(`${baseURL}post/delete/${id}`);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};

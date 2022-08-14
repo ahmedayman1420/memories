@@ -9,6 +9,12 @@ const postReducer = (state = [], action) => {
         else return obj;
       });
 
+    case "DELETE_POST":
+      return state.filter((item) => {
+        return item._id !==
+         action.payload;
+      });
+
     case "GET_POSTS":
       return action.payload;
 

@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React from "react";
+import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,11 +11,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Style from "./Post.module.scss";
 import moment from "moment";
-import { setEditPostId } from "../../../Redux/Actions/actions";
+import { deletePost, setEditPostId } from "../../../Redux/Actions/actions";
 
 function Post() {
   const posts = useSelector((state) => state.posts);
   const dispatch = useDispatch();
+  const [waiting, setWaiting] = useState(false);
 
   return (
     <>
@@ -43,11 +44,19 @@ function Post() {
                         <span> 0</span>
                       </Card.Text>
                       <Card.Text>
-                        <span>Delete </span>
+                        <span>
+                          {!waiting && "Delete "}
+                          {waiting && "Wait ... "}
+                        </span>
                         <FontAwesomeIcon
                           className={["text-danger", Style.icon].join(" ")}
                           size="lg"
                           icon={faTrashAlt}
+                          onClick={async () => {
+                            setWaiting(true);
+                            await dispatch(deletePost(post._id));
+                            setWaiting(false);
+                          }}
                         />
                       </Card.Text>
                     </ListGroup.Item>

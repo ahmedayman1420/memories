@@ -13,7 +13,16 @@ the response of this function in success (Post created successfully), in failure
 const addPost = async (req, res) => {
   try {
     let { creator, title, message, tags, file, filePath } = req.body;
-    let newPost = new posts({ creator, title, message, tags, file, filePath });
+    let createdAt = new Date();
+    let newPost = new posts({
+      creator,
+      title,
+      message,
+      tags,
+      file,
+      filePath,
+      createdAt,
+    });
     await newPost.save();
     res
       .status(StatusCodes.CREATED)
@@ -66,9 +75,26 @@ const editPost = async (req, res) => {
   }
 };
 
+/*
+//==// Delete Post: is the logic of '/post/delete/id' api that used to delete specific post.
+the response of this function in success ("Post deleted successfully"), in failure (show error message).
+*/
+const deletePost = async (req, res) => {
+  try {
+    let { id } = req.params;
+
+    const data = await posts.findByIdAndDelete(id);
+    res.status(StatusCodes.OK).json({ Message: "Post deleted successfully", post: data });
+  } catch (error) {
+    console.log({ error });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+  }
+};
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = {
   addPost,
   getPosts,
   editPost,
+  deletePost,
 };

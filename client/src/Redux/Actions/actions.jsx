@@ -1,4 +1,9 @@
-import { editPostAPI, getAllPosts, submitPost } from "../../APIs/APIs";
+import {
+  deletePostAPI,
+  editPostAPI,
+  getAllPosts,
+  submitPost,
+} from "../../APIs/APIs";
 
 export const addPost = (post) => async (dispatch) => {
   const res = await submitPost(post);
@@ -21,6 +26,14 @@ export const editPost = (post) => async (dispatch) => {
   dispatch({
     type: "EDIT_POST",
     payload: res.data.post,
+  });
+};
+
+export const deletePost = (id) => async (dispatch) => {
+  const res = await deletePostAPI(id);
+  dispatch({
+    type: "DELETE_POST",
+    payload: id,
   });
 };
 
