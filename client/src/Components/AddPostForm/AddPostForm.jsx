@@ -1,25 +1,44 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useDispatch } from "react-redux";
-import { addPost } from "../../Redux/Actions/actions";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addPost,
+  errorReset,
+  resetId,
+  unexpectedError,
+} from "../../Redux/Actions/actions";
+import Alert from "react-bootstrap/Alert";
 
 function AddPostForm() {
   const dispatch = useDispatch();
-
+  const error = useSelector((state) => state.error);
+  const postId = useSelector((state) => state.postId);
+  console.log({ postId });
   const [post, setPost] = useState({
+    _id: "",
     creator: "",
     title: "",
     message: "",
     tags: [],
     file: "",
+    filePath: "",
   });
+  console.log({ post });
+  const posts = useSelector((state) => state.posts);
+  const [waiting, setWaiting] = useState(false);
+  const [editState, setEditState] = useState(false);
+
+  if (postId) {
+    setPost(posts.find((item) => item._id === postId));
+    setEditState(true);
+    dispatch(resetId());
+  }
 
   const savePostData = ({ target }) => {
     if (target.name !== "tags")
       setPost({ ...post, [target.name]: target.value });
     else setPost({ ...post, [target.name]: target.value.split(" ") });
-    console.log(post);
   };
 
   const clearForm = (e) => {
@@ -35,10 +54,18 @@ function AddPostForm() {
     document.getElementById("postForm").reset();
   };
 
-  const submitPost = (e) => {
+  const submitPost = async (e) => {
     e.preventDefault();
-    dispatch(addPost(post));
-    clearForm(e);
+    setWaiting(true);
+    let result = Object.values(post).every((p) => p !== "");
+    if (result) {
+      await dispatch(errorReset());
+      await dispatch(addPost(post));
+      clearForm(e);
+    } else {
+      await dispatch(unexpectedError("ERROR_ADD_POST"));
+    }
+    setWaiting(false);
   };
   const getBase64 = ({ target }, cb) => {
     let reader = new FileReader();
@@ -55,8 +82,11 @@ function AddPostForm() {
 
   return (
     <>
-      <div className="postForm ">
-        <h2 className="text-center">Creating a Memory</h2>
+      <div className="postForm text-center">
+        <h2 className="text-center">
+          {editState && "Edit a Memory"}
+          {!editState && "Creating a Memory"}
+        </h2>
         <Form onSubmit={submitPost} id="postForm">
           <Form.Group className="mb-3" controlId="formBasicCreator">
             <Form.Control
@@ -65,6 +95,7 @@ function AddPostForm() {
               type="text"
               placeholder="Creator"
               required={true}
+              value={post.creator}
             />
           </Form.Group>
 
@@ -75,6 +106,7 @@ function AddPostForm() {
               name="title"
               placeholder="Title"
               required={true}
+              value={post.title}
             />
           </Form.Group>
 
@@ -85,6 +117,7 @@ function AddPostForm() {
               name="message"
               placeholder="Message"
               required={true}
+              value={post.message}
             />
           </Form.Group>
 
@@ -95,21 +128,36 @@ function AddPostForm() {
               name="tags"
               placeholder="Tags"
               required={true}
+              value={post.tags.join(" ")}
             />
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formBasicFile">
-            <Form.Control
-              onChange={(e) => {
-                getBase64(e, (result) => {
-                  setPost({ ...post, [e.target.name]: result });
-                });
-              }}
-              type="file"
-              name="file"
-              required={true}
-            />
+            {!editState && (
+              <Form.Control
+                onChange={(e) => {
+                  getBase64(e, (result) => {
+                    setPost({
+                      ...post,
+                      [e.target.name]: result,
+                      filePath: e.target.value,
+                    });
+                  });
+                  console.log(e.target.value);
+                  console.log(e.target.value.slice(12));
+                }}
+                type="file"
+                name="file"
+                required={true}
+              />
+            )}
           </Form.Group>
+
+          {error.value && (
+            <Alert variant="danger">
+              <Alert.Heading>{error.message}</Alert.Heading>
+            </Alert>
+          )}
 
           <Button
             onClick={(e) => {
@@ -122,7 +170,9 @@ function AddPostForm() {
             Clear
           </Button>
           <Button variant="primary" type="submit">
-            Submit
+            {!waiting && !editState && "Submit"}
+            {!waiting && editState && "Edit"}
+            {waiting && "wait ... "}
           </Button>
         </Form>
       </div>

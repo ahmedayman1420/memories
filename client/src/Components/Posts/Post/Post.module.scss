@@ -1,0 +1,15 @@
+.icon:hover {
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.cardParent {
+  position: relative !important;
+}
+
+.cardChild {
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  width: 98%;
+}

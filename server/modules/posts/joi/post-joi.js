@@ -17,6 +17,7 @@ const userJoi = {
         message: joi.string().required(),
         tags: joi.array().items(joi.string()).required(),
         file: joi.string().required(),
+        filePath: joi.string().required(),
       }),
   },
 };

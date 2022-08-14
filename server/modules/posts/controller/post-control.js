@@ -12,12 +12,12 @@ the response of this function in success (Post created successfully), in failure
 */
 const addPost = async (req, res) => {
   try {
-    let { creator, title, message, tags, file } = req.body;
-    let newPost = new posts({ creator, title, message, tags, file });
+    let { creator, title, message, tags, file, filePath } = req.body;
+    let newPost = new posts({ creator, title, message, tags, file, filePath });
     await newPost.save();
     res
       .status(StatusCodes.CREATED)
-      .json({ Message: "Post created successfully", data: {} });
+      .json({ Message: "Post created successfully", post: newPost });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -30,7 +30,8 @@ the response of this function in success (data:posts), in failure (show error me
 */
 const getPosts = async (req, res) => {
   try {
-    res.status(StatusCodes.OK).json({ Message: "Success", data: {} });
+    const data = await posts.find({ isDeleted: false });
+    res.status(StatusCodes.OK).json({ Message: "Success", posts: data });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });

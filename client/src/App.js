@@ -5,8 +5,6 @@ import Home from "./Components/Home/Home";
 
 function App() {
   const posts = useSelector((state) => state.posts);
-  // const dispatch = useDispatch();
-  // onClick={() => {dispatch(increment());}} //========= Change ==========//
   console.log(posts);
   return (
     <>

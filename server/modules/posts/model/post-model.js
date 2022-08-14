@@ -18,6 +18,7 @@ const postSchema = mongoose.Schema(
     creator: { type: String, required: true }, // relate this field with user collection
     tags: [{ type: String, required: true }],
     file: { type: String, required: true },
+    filePath: { type: String, required: true },
     likeCount: {
       type: Number,
       required: true,
