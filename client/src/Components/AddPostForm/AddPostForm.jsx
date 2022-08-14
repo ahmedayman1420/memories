@@ -55,16 +55,20 @@ function AddPostForm() {
     e.preventDefault();
     setWaiting(true);
     if (!editState) {
-      let result = Object.values(post).every((p) => p !== "");
+      let result = Object.values(post).every((p) => {
+        if (typeof p === "string") return p !== "" && !/^\s/.test(p);
+        else return p[0] !== "";
+      });
       if (result) {
         await dispatch(errorReset());
         await dispatch(addPost(post));
         clearForm(e);
       } else await dispatch(unexpectedError("ERROR_ADD_POST"));
     } else {
-      let result =
-        Object.values(post).every((p) => p !== "") &&
-        post.tags.toString() !== "";
+      let result = Object.values(post).every((p) => {
+        if (typeof p === "string") return p !== "" && !/^\s/.test(p);
+        else return p[0] !== "";
+      });
       if (result) {
         await dispatch(errorReset());
         await dispatch(editPost(post));
