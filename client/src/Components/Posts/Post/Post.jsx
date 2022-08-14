@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Style from "./Post.module.scss";
 import moment from "moment";
-import { editPost } from "../../../Redux/Actions/actions";
+import { setEditPostId } from "../../../Redux/Actions/actions";
 
 function Post() {
   const posts = useSelector((state) => state.posts);
@@ -62,7 +62,7 @@ function Post() {
                         size="lg"
                         icon={faEllipsis}
                         onClick={() => {
-                          dispatch(editPost(post._id));
+                          dispatch(setEditPostId(post._id));
                         }}
                       />
                     </Card.Title>

@@ -31,5 +31,11 @@ router.post(
   postFunctions.addPost
 );
 
+// edit post api
+router.put(
+  "/post/edit/:id",
+  validateRequest(postSchemas.editPostSchema),
+  postFunctions.editPost
+);
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = router;

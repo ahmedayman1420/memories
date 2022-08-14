@@ -5,7 +5,7 @@ import Home from "./Components/Home/Home";
 
 function App() {
   const posts = useSelector((state) => state.posts);
-  console.log(posts);
+  console.log({posts})
   return (
     <>
       <Home />

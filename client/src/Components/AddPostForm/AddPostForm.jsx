@@ -4,6 +4,7 @@ import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addPost,
+  editPost,
   errorReset,
   resetId,
   unexpectedError,
@@ -14,25 +15,21 @@ function AddPostForm() {
   const dispatch = useDispatch();
   const error = useSelector((state) => state.error);
   const postId = useSelector((state) => state.postId);
-  console.log({ postId });
   const [post, setPost] = useState({
-    _id: "",
     creator: "",
     title: "",
     message: "",
     tags: [],
     file: "",
-    filePath: "",
   });
-  console.log({ post });
+
   const posts = useSelector((state) => state.posts);
   const [waiting, setWaiting] = useState(false);
   const [editState, setEditState] = useState(false);
 
-  if (postId) {
+  if (postId && editState === false) {
     setPost(posts.find((item) => item._id === postId));
     setEditState(true);
-    dispatch(resetId());
   }
 
   const savePostData = ({ target }) => {
@@ -57,16 +54,28 @@ function AddPostForm() {
   const submitPost = async (e) => {
     e.preventDefault();
     setWaiting(true);
-    let result = Object.values(post).every((p) => p !== "");
-    if (result) {
-      await dispatch(errorReset());
-      await dispatch(addPost(post));
-      clearForm(e);
+    if (!editState) {
+      let result = Object.values(post).every((p) => p !== "");
+      if (result) {
+        await dispatch(errorReset());
+        await dispatch(addPost(post));
+        clearForm(e);
+      } else await dispatch(unexpectedError("ERROR_ADD_POST"));
     } else {
-      await dispatch(unexpectedError("ERROR_ADD_POST"));
+      let result =
+        Object.values(post).every((p) => p !== "") &&
+        post.tags.toString() !== "";
+      if (result) {
+        await dispatch(errorReset());
+        await dispatch(editPost(post));
+        dispatch(resetId());
+        setEditState(false);
+        clearForm(e);
+      } else await dispatch(unexpectedError("ERROR_EDIT_POST"));
     }
     setWaiting(false);
   };
+
   const getBase64 = ({ target }, cb) => {
     let reader = new FileReader();
     if (target.files[0] && target.files[0].type.match("image.*"))
@@ -84,7 +93,7 @@ function AddPostForm() {
     <>
       <div className="postForm text-center">
         <h2 className="text-center">
-          {editState && "Edit a Memory"}
+          {editState && "Editing a Memory"}
           {!editState && "Creating a Memory"}
         </h2>
         <Form onSubmit={submitPost} id="postForm">
@@ -143,8 +152,6 @@ function AddPostForm() {
                       filePath: e.target.value,
                     });
                   });
-                  console.log(e.target.value);
-                  console.log(e.target.value.slice(12));
                 }}
                 type="file"
                 name="file"
@@ -169,11 +176,18 @@ function AddPostForm() {
           >
             Clear
           </Button>
-          <Button variant="primary" type="submit">
-            {!waiting && !editState && "Submit"}
-            {!waiting && editState && "Edit"}
-            {waiting && "wait ... "}
-          </Button>
+          {!editState && (
+            <Button variant="primary" type="submit">
+              {!waiting && "Submit"}
+              {waiting && "wait ... "}
+            </Button>
+          )}
+          {editState && (
+            <Button variant="warning" type="submit">
+              {!waiting && "Edit"}
+              {waiting && "wait ... "}
+            </Button>
+          )}
         </Form>
       </div>
     </>

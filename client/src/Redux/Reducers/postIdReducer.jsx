@@ -1,6 +1,6 @@
 const postIdReducer = (state = "", action) => {
   switch (action.type) {
-    case "EDIT_POST":
+    case "EDIT_POST_ID":
       return action.payload;
 
     case "RESET_ID":

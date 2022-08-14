@@ -38,8 +38,37 @@ const getPosts = async (req, res) => {
   }
 };
 
+/*
+//==// Edit Post: is the logic of '/post/edit/id' api that used to edit specific post.
+the response of this function in success (data:post), in failure (show error message).
+*/
+const editPost = async (req, res) => {
+  try {
+    let { creator, title, message, tags } = req.body;
+    let { id } = req.params;
+
+    const data = await posts.findByIdAndUpdate(
+      id,
+      {
+        creator,
+        title,
+        message,
+        tags,
+      },
+      {
+        new: true,
+      }
+    );
+    res.status(StatusCodes.OK).json({ Message: "Success", post: data });
+  } catch (error) {
+    console.log({ error });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+  }
+};
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = {
   addPost,
   getPosts,
+  editPost,
 };
