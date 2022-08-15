@@ -1,0 +1,21 @@
+.sign:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.password,
+.confirmPasswrod {
+  position: relative !important;
+}
+.posswordIcon,
+.confirmPasswrodIcon {
+  position: absolute !important;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 2%;
+}
+
+.posswordIcon:hover,
+.confirmPasswrodIcon:hover {
+  cursor: pointer;
+}
