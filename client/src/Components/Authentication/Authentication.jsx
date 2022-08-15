@@ -1,16 +1,34 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Style from "./Authentication.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
+import { GoogleLogin } from "react-google-login";
+import { gapi } from "gapi-script";
+import { googleAuthAction } from "../../Redux/Actions/actions";
+import { useDispatch } from "react-redux";
 
 function Authentication() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  useEffect(() => {
+    function start() {
+      gapi.client.init({
+        clientId:
+          "633147263244-m08i8j19dacnbs07mjjqlflti4lhak2c.apps.googleusercontent.com",
+        scope: "email",
+      });
+    }
+
+    gapi.load("client:auth2", start);
+  }, []);
+
   const baseURL = "https://route-egypt-api.herokuapp.com/";
-  let [isSignIn, setIsSignIn] = useState(false);
+  let [isSignIn, setIsSignIn] = useState(true);
   let [error, setError] = useState("");
   let [user, setUser] = useState({
     first_name: "",
@@ -44,6 +62,19 @@ function Authentication() {
     } else {
       setError(res.data.message);
     }
+  };
+
+  const responseGoogleSuccess = async (res) => {
+    console.log("Google Sign Up success");
+    const profile = res?.profileObj;
+    const token = res?.tokenId;
+    await dispatch(googleAuthAction(profile, token));
+    navigate("/", { replace: true });
+  };
+
+  const responseGoogleFailure = async (error) => {
+    console.log("Google Sign up failure");
+    console.log(error);
   };
 
   console.log(user);
@@ -80,7 +111,6 @@ function Authentication() {
               onChange={getUser}
             />
           </Form.Group>
-
           <Form.Group
             className={["mb-3", Style.password].join(" ")}
             controlId="formBasicPassword"
@@ -99,7 +129,6 @@ function Authentication() {
               onClick={togglePassword}
             />
           </Form.Group>
-
           {!isSignIn && (
             <Form.Group
               className={["mb-3", Style.confirmPasswrod].join(" ")}
@@ -120,13 +149,30 @@ function Authentication() {
               />
             </Form.Group>
           )}
-
           {error && <Alert variant="danger">{error}</Alert>}
           <Button className="w-100 mb-3" variant="info" type="submit">
             {waiting && "Waiting ... "}
             {!waiting && !isSignIn && "Signup"}
             {!waiting && isSignIn && "Signin"}
           </Button>
+
+          <GoogleLogin
+            clientId="633147263244-m08i8j19dacnbs07mjjqlflti4lhak2c.apps.googleusercontent.com"
+            render={(renderProps) => (
+              <Button
+                className="w-100 mb-3"
+                variant="success"
+                onClick={renderProps.onClick}
+                disabled={renderProps.disabled}
+              >
+                Continue with google
+              </Button>
+            )}
+            buttonText="Login"
+            onSuccess={responseGoogleSuccess}
+            onFailure={responseGoogleFailure}
+            cookiePolicy={"single_host_origin"}
+          />
 
           {isSignIn && (
             <Alert variant="primary">

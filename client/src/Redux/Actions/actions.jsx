@@ -5,7 +5,18 @@ import {
   likePostAPI,
   addPostAPI,
 } from "../../APIs/APIs";
-import {ADD_POST, DELETE_POST, EDIT_POST, EDIT_POST_ID, ERROR_RESET, GET_POSTS, LIKE_POST, RESET_ID} from "./actionStrings";
+import {
+  ADD_POST,
+  DELETE_POST,
+  EDIT_POST,
+  EDIT_POST_ID,
+  ERROR_RESET,
+  GET_POSTS,
+  GOOGLE_AUTH,
+  LIKE_POST,
+  LOGOUT,
+  RESET_ID,
+} from "./actionStrings";
 
 export const addPostAction = (post) => async (dispatch) => {
   const res = await addPostAPI(post);
@@ -70,5 +81,18 @@ export const errorResetAction = () => async (dispatch) => {
   dispatch({
     type: ERROR_RESET,
     payload: { value: false, message: "All is good" },
+  });
+};
+
+export const googleAuthAction = (profile, token) => async (dispatch) => {
+  dispatch({
+    type: GOOGLE_AUTH,
+    payload: { profile, token },
+  });
+};
+
+export const logOutAction = () => async (dispatch) => {
+  dispatch({
+    type: LOGOUT,
   });
 };

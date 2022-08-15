@@ -8,3 +8,5 @@ export const ERROR_EDIT_POST = "ERROR_EDIT_POST";
 export const ERROR_RESET = "ERROR_RESET";
 export const EDIT_POST_ID = "EDIT_POST_ID";
 export const RESET_ID = "RESET_ID";
+export const GOOGLE_AUTH = "GOOGLE_AUTH";
+export const LOGOUT = "LOGOUT";
