@@ -4,6 +4,9 @@ import {
   getAllPostsAPI,
   likePostAPI,
   addPostAPI,
+  signInAPI,
+  signUpAPI,
+  googleSigninAPI,
 } from "../../APIs/APIs";
 import {
   ADD_POST,
@@ -16,6 +19,8 @@ import {
   LIKE_POST,
   LOGOUT,
   RESET_ID,
+  SIGNIN,
+  SIGNUP,
 } from "./actionStrings";
 
 export const addPostAction = (post) => async (dispatch) => {
@@ -84,7 +89,26 @@ export const errorResetAction = () => async (dispatch) => {
   });
 };
 
+export const signUpAction = (user) => async (dispatch) => {
+  const res = await signUpAPI(user);
+  dispatch({
+    type: SIGNUP,
+    payload: { user: res.data.data.user, token: res.data.data.token },
+  });
+  return res;
+};
+
+export const signInAction = (user) => async (dispatch) => {
+  const res = await signInAPI(user);
+  dispatch({
+    type: SIGNIN,
+    payload: { user: res.data.data.user, token: res.data.data.token },
+  });
+  return res;
+};
+
 export const googleAuthAction = (profile, token) => async (dispatch) => {
+  googleSigninAPI(token);
   dispatch({
     type: GOOGLE_AUTH,
     payload: { profile, token },

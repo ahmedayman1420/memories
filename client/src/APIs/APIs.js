@@ -1,4 +1,5 @@
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 const baseURL = "http://localhost:5000/";
 
 export const addPostAPI = async (post) => {
@@ -56,6 +57,43 @@ export const deletePostAPI = async (id) => {
 export const likePostAPI = async (id) => {
   try {
     const res = await axios.patch(`${baseURL}post/like/${id}`);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const signUpAPI = async (user) => {
+  try {
+    const res = await axios.post(`${baseURL}user/signup`, user);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const signInAPI = async (user) => {
+  try {
+    console.log("HERE-1");
+    const res = await axios.post(`${baseURL}user/signin`, {
+      email: user.email,
+      password: user.password,
+    });
+    console.log("HERE-2");
+
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const googleSigninAPI = async (token) => {
+  try {
+    var decoded = jwt_decode(token);
+    const res = await axios.post(`${baseURL}google`, {
+      email: decoded.email,
+      name: decoded.name,
+    });
     return res;
   } catch (error) {
     console.log(error);

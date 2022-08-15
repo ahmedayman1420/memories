@@ -17,16 +17,23 @@ const isAuthorized = require("../../../Common/Middlewares/isAuthorized");
 
 // signup api
 router.post(
-  "/signup",
+  "/user/signup",
   validateRequest(userSchemas.signupSchema),
   userFunctions.signUp
 );
 
 // signin api
 router.post(
-  "/signin",
+  "/user/signin",
   validateRequest(userSchemas.signinSchema),
   userFunctions.signIn
+);
+
+// signin api
+router.post(
+  "/google",
+  validateRequest(userSchemas.googleSigninSchema),
+  userFunctions.googleSignIn
 );
 
 // update api

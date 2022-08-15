@@ -3,6 +3,7 @@ const users = require("../model/user-model");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
+const { generatePassword } = require("./services");
 
 // ====== --- ====== > User Methods < ====== --- ====== //
 
@@ -12,29 +13,36 @@ the response of this function in success (Sign up Successfully), in failure (sho
 */
 const signUp = async (req, res) => {
   try {
-    let { name, email, password, age } = req.body;
+    let { name, email, password, confirmPassword } = req.body;
 
     const oldUser = await users.findOne({ email, isDeleted: false });
     if (!oldUser) {
-      const newUser = new users({ name, email, password, age });
-      const data = await newUser.save();
+      if (password === confirmPassword) {
+        const newUser = new users({ name, email, password });
+        const data = await newUser.save();
 
-      var token = jwt.sign(
-        { email: data.email, role: data.role },
-        process.env.ENCRYPT_KEY
-      );
+        var token = jwt.sign(
+          { name: data.name, email: data.email, role: data.role },
+          process.env.ENCRYPT_KEY
+        );
 
-      res
-        .status(StatusCodes.CREATED)
-        .json({ Message: "Sign up Successfully", data: { token } });
+        res.status(StatusCodes.CREATED).json({
+          message: "Sign up Successfully",
+          data: { token, user: newUser },
+        });
+      } else {
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ Message: "Password not matched confirm passwords" });
+      }
     } else {
       res
         .status(StatusCodes.BAD_REQUEST)
         .json({ Message: "Email is Already Found" });
     }
   } catch (error) {
-    console.log({ error });
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+    console.log(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
   }
 };
 
@@ -53,12 +61,13 @@ const signIn = async (req, res) => {
         function (err, result) {
           if (result) {
             var token = jwt.sign(
-              { email: oldUser.email, role: oldUser.role },
+              { name: oldUser.name, email: oldUser.email, role: oldUser.role },
               process.env.ENCRYPT_KEY
             );
-            res
-              .status(StatusCodes.OK)
-              .json({ Message: "Sign in Successfully", Data: { token } });
+            res.status(StatusCodes.OK).json({
+              message: "Sign in Successfully",
+              data: { token, user: oldUser },
+            });
           } else {
             res
               .status(StatusCodes.BAD_REQUEST)
@@ -70,8 +79,46 @@ const signIn = async (req, res) => {
       res.status(StatusCodes.BAD_REQUEST).json({ Message: "User Not Found !" });
     }
   } catch (error) {
-    console.log({ error });
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+    console.log(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
+  }
+};
+
+/*
+//==// Google signin: is the logic of '/google' api that used to continue with google.
+the response of this function in success (User login with google success), in failure (show error message).
+*/
+const googleSignIn = async (req, res) => {
+  try {
+    let { name, email } = req.body;
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      var token = jwt.sign(
+        { name: oldUser.name, email: oldUser.email, role: oldUser.role },
+        process.env.ENCRYPT_KEY
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Sign in Successfully with Google",
+        data: { token, user: oldUser },
+      });
+    } else {
+      const randomPassword = generatePassword();
+      const newUser = new users({ name, email, password: randomPassword });
+      const data = await newUser.save();
+
+      var token = jwt.sign(
+        { name: data.name, email: data.email, role: data.role },
+        process.env.ENCRYPT_KEY
+      );
+
+      res.status(StatusCodes.CREATED).json({
+        message: "Sign up Successfully with Google",
+        data: { token, user: newUser },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
   }
 };
 
@@ -110,8 +157,8 @@ const updatePassword = async (req, res) => {
       res.status(StatusCodes.BAD_REQUEST).json({ Message: "User Not Found !" });
     }
   } catch (error) {
-    console.log({ error });
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+    console.log(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
   }
 };
 
@@ -119,5 +166,6 @@ const updatePassword = async (req, res) => {
 module.exports = {
   signUp,
   signIn,
+  googleSignIn,
   updatePassword,
 };

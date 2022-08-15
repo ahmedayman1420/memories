@@ -18,15 +18,13 @@ function Navigationbar() {
   useEffect(() => {
     try {
       var decoded = jwt_decode(memoryProfile?.token);
-      console.log(decoded.name);
-      console.log(decoded.picture);
       setUser(decoded);
     } catch (error) {
       setUser(null);
       console.log(error);
     }
   }, [location]);
-  
+
   return (
     <>
       <Navbar
@@ -47,17 +45,19 @@ function Navigationbar() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               {user && (
-                <div>
-                  <img
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      marginRight: "10px",
-                    }}
-                    src={user.picture}
-                    alt=""
-                  />
+                <div className="d-flex align-items-center">
+                  {user.picture && (
+                    <img
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        borderRadius: "50%",
+                        marginRight: "10px",
+                      }}
+                      src={user.picture}
+                      alt=""
+                    />
+                  )}
                   {user.name}
                 </div>
               )}

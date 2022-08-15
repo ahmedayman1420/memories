@@ -9,8 +9,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash, faEye } from "@fortawesome/free-solid-svg-icons";
 import { GoogleLogin } from "react-google-login";
 import { gapi } from "gapi-script";
-import { googleAuthAction } from "../../Redux/Actions/actions";
-import { useDispatch } from "react-redux";
+import {
+  errorResetAction,
+  googleAuthAction,
+  signInAction,
+  signUpAction,
+  unexpectedErrorAction,
+} from "../../Redux/Actions/actions";
+import { useDispatch, useSelector } from "react-redux";
+import { ERROR_SIGNIN, SIGNUP } from "../../Redux/Actions/actionStrings";
 
 function Authentication() {
   const dispatch = useDispatch();
@@ -27,9 +34,8 @@ function Authentication() {
     gapi.load("client:auth2", start);
   }, []);
 
-  const baseURL = "https://route-egypt-api.herokuapp.com/";
+  const error = useSelector((state) => state.error);
   let [isSignIn, setIsSignIn] = useState(true);
-  let [error, setError] = useState("");
   let [user, setUser] = useState({
     first_name: "",
     last_name: "",
@@ -54,13 +60,64 @@ function Authentication() {
   const sendData = async (e) => {
     e.preventDefault();
     setWaiting(true);
-    const res = await axios.post(`${baseURL}signup`, user);
-    setWaiting(false);
-    if (res.data.message === "success") {
-      setSuccess(true);
-      setError("");
+
+    if (isSignIn) {
+      // ====== ---- ====== Signin ====== ---- ====== //
+      let result =
+        user.email !== "" &&
+        !/^\s/.test(user.emai) &&
+        user.password !== "" &&
+        !/^\s/.test(user.password);
+      if (result) {
+        const res = await dispatch(
+          signInAction({
+            email: user.email,
+            password: user.password,
+            confirmPassword: user.confirmPassword,
+            name: `${user.first_name} ${user.last_name}`,
+          })
+        );
+        if (res.data.message === "Sign in Successfully") {
+          setSuccess(true);
+          await dispatch(errorResetAction());
+          setWaiting(false);
+          navigate("/", { replace: true });
+        } else {
+          await dispatch(unexpectedErrorAction(ERROR_SIGNIN));
+          setWaiting(false);
+        }
+      } else {
+        await dispatch(unexpectedErrorAction(ERROR_SIGNIN));
+      }
+      setWaiting(false);
     } else {
-      setError(res.data.message);
+      // ====== ---- ====== Signin ====== ---- ====== //
+      let result = Object.values(user).every((p) => {
+        return p !== "" && !/^\s/.test(p);
+      });
+
+      if (result) {
+        const res = await dispatch(
+          signUpAction({
+            email: user.email,
+            password: user.password,
+            confirmPassword: user.confirmPassword,
+            name: `${user.first_name} ${user.last_name}`,
+          })
+        );
+        if (res.data.message === "Sign up Successfully") {
+          setSuccess(true);
+          await dispatch(errorResetAction());
+          setWaiting(false);
+          navigate("/", { replace: true });
+        } else {
+          setWaiting(false);
+          await dispatch(unexpectedErrorAction(SIGNUP));
+        }
+      } else {
+        await dispatch(unexpectedErrorAction(SIGNUP));
+      }
+      setWaiting(false);
     }
   };
 
@@ -77,8 +134,6 @@ function Authentication() {
     console.log(error);
   };
 
-  console.log(user);
-
   return (
     <>
       <div className="vh-100 d-flex justify-content-center align-items-center">
@@ -88,6 +143,7 @@ function Authentication() {
               <Form.Control
                 name="first_name"
                 type="text"
+                required={true}
                 placeholder="First name"
                 onChange={getUser}
               />
@@ -98,6 +154,7 @@ function Authentication() {
               <Form.Control
                 name="last_name"
                 type="text"
+                required={true}
                 placeholder="Last name"
                 onChange={getUser}
               />
@@ -107,6 +164,7 @@ function Authentication() {
             <Form.Control
               name="email"
               type="email"
+              required={true}
               placeholder="Enter email"
               onChange={getUser}
             />
@@ -118,6 +176,7 @@ function Authentication() {
             <Form.Control
               name="password"
               placeholder="Password"
+              required={true}
               onChange={getUser}
               type={passwordShown ? "text" : "password"}
             />
@@ -137,6 +196,7 @@ function Authentication() {
               <Form.Control
                 name="confirmPassword"
                 placeholder="Confirm Password"
+                required={true}
                 onChange={getUser}
                 type={passwordShown ? "text" : "password"}
               />
@@ -149,7 +209,11 @@ function Authentication() {
               />
             </Form.Group>
           )}
-          {error && <Alert variant="danger">{error}</Alert>}
+          {error.value && (
+            <Alert variant="danger">
+              <Alert.Heading>{error.message}</Alert.Heading>
+            </Alert>
+          )}
           <Button className="w-100 mb-3" variant="info" type="submit">
             {waiting && "Waiting ... "}
             {!waiting && !isSignIn && "Signup"}

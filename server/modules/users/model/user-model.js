@@ -16,12 +16,6 @@ const userSchema = mongoose.Schema(
       required: true,
     },
     password: { type: String, required: true },
-    age: {
-      type: Number,
-      required: true,
-      min: [20, "Min age error"],
-      max: [60, "Max age error"],
-    },
     role: { type: String, default: "user" },
     isDeleted: { type: Boolean, default: false },
   },
@@ -33,7 +27,7 @@ const userSchema = mongoose.Schema(
 
 // ====== --- ====== > User Hooks < ====== --- ====== //
 userSchema.pre("save", async function () {
-  this.password = await bcrypt.hash(this.password, 7);
+  this.password = await bcrypt.hash(this.password, 12);
 });
 
 // ====== --- ====== > user model < ====== --- ====== //
