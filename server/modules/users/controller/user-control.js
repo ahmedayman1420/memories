@@ -33,12 +33,12 @@ const signUp = async (req, res) => {
       } else {
         res
           .status(StatusCodes.BAD_REQUEST)
-          .json({ Message: "Password not matched confirm passwords" });
+          .json({ message: "Password not matched confirm passwords" });
       }
     } else {
       res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ Message: "Email is Already Found" });
+        .json({ message: "Email is Already Found" });
     }
   } catch (error) {
     console.log(error);
@@ -71,12 +71,12 @@ const signIn = async (req, res) => {
           } else {
             res
               .status(StatusCodes.BAD_REQUEST)
-              .json({ Message: "Incorrect Password !" });
+              .json({ message: "Incorrect Password !" });
           }
         }
       );
     } else {
-      res.status(StatusCodes.BAD_REQUEST).json({ Message: "User Not Found !" });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "User Not Found !" });
     }
   } catch (error) {
     console.log(error);

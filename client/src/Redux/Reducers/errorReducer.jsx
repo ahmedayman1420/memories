@@ -3,6 +3,7 @@ import {
   ERROR_EDIT_POST,
   ERROR_RESET,
   ERROR_SIGNIN,
+  ERROR_SIGNUP,
 } from "../Actions/actionStrings";
 
 const errorReducer = (state = { value: false, message: "" }, action) => {
@@ -11,6 +12,9 @@ const errorReducer = (state = { value: false, message: "" }, action) => {
       return action.payload;
 
     case ERROR_EDIT_POST:
+      return action.payload;
+
+    case ERROR_SIGNUP:
       return action.payload;
 
     case ERROR_SIGNIN:

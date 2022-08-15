@@ -91,6 +91,7 @@ export const errorResetAction = () => async (dispatch) => {
 
 export const signUpAction = (user) => async (dispatch) => {
   const res = await signUpAPI(user);
+  if (res?.data?.message !== "Sign up Successfully") return res;
   dispatch({
     type: SIGNUP,
     payload: { user: res.data.data.user, token: res.data.data.token },
@@ -100,6 +101,7 @@ export const signUpAction = (user) => async (dispatch) => {
 
 export const signInAction = (user) => async (dispatch) => {
   const res = await signInAPI(user);
+  if (res?.data?.message !== "Sign in Successfully") return res;
   dispatch({
     type: SIGNIN,
     payload: { user: res.data.data.user, token: res.data.data.token },

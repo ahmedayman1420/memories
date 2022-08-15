@@ -17,7 +17,11 @@ import {
   unexpectedErrorAction,
 } from "../../Redux/Actions/actions";
 import { useDispatch, useSelector } from "react-redux";
-import { ERROR_SIGNIN, SIGNUP } from "../../Redux/Actions/actionStrings";
+import {
+  ERROR_SIGNIN,
+  ERROR_SIGNUP,
+  SIGNUP,
+} from "../../Redux/Actions/actionStrings";
 
 function Authentication() {
   const dispatch = useDispatch();
@@ -77,14 +81,12 @@ function Authentication() {
             name: `${user.first_name} ${user.last_name}`,
           })
         );
-        if (res.data.message === "Sign in Successfully") {
+        if (res?.data?.message === "Sign in Successfully") {
           setSuccess(true);
           await dispatch(errorResetAction());
-          setWaiting(false);
           navigate("/", { replace: true });
         } else {
           await dispatch(unexpectedErrorAction(ERROR_SIGNIN));
-          setWaiting(false);
         }
       } else {
         await dispatch(unexpectedErrorAction(ERROR_SIGNIN));
@@ -105,17 +107,17 @@ function Authentication() {
             name: `${user.first_name} ${user.last_name}`,
           })
         );
-        if (res.data.message === "Sign up Successfully") {
+        if (res?.data?.message === "Sign up Successfully") {
           setSuccess(true);
           await dispatch(errorResetAction());
           setWaiting(false);
           navigate("/", { replace: true });
         } else {
           setWaiting(false);
-          await dispatch(unexpectedErrorAction(SIGNUP));
+          await dispatch(unexpectedErrorAction(ERROR_SIGNUP));
         }
       } else {
-        await dispatch(unexpectedErrorAction(SIGNUP));
+        await dispatch(unexpectedErrorAction(ERROR_SIGNUP));
       }
       setWaiting(false);
     }

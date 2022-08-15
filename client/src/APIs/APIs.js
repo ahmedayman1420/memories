@@ -74,13 +74,10 @@ export const signUpAPI = async (user) => {
 
 export const signInAPI = async (user) => {
   try {
-    console.log("HERE-1");
     const res = await axios.post(`${baseURL}user/signin`, {
       email: user.email,
       password: user.password,
     });
-    console.log("HERE-2");
-
     return res;
   } catch (error) {
     console.log(error);
