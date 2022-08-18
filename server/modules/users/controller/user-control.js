@@ -22,7 +22,10 @@ const signUp = async (req, res) => {
         const data = await newUser.save();
 
         var token = jwt.sign(
-          { name: data.name, email: data.email, role: data.role },
+          {
+            data: { name: data.name, email: data.email, role: data.role },
+            exp: Math.floor(Date.now() / 1000) + 60 * 60,
+          },
           process.env.ENCRYPT_KEY
         );
 
@@ -61,7 +64,14 @@ const signIn = async (req, res) => {
         function (err, result) {
           if (result) {
             var token = jwt.sign(
-              { name: oldUser.name, email: oldUser.email, role: oldUser.role },
+              {
+                data: {
+                  name: oldUser.name,
+                  email: oldUser.email,
+                  role: oldUser.role,
+                },
+                exp: Math.floor(Date.now() / 1000) + 60 * 60,
+              },
               process.env.ENCRYPT_KEY
             );
             res.status(StatusCodes.OK).json({
@@ -94,7 +104,14 @@ const googleSignIn = async (req, res) => {
     const oldUser = await users.findOne({ email, isDeleted: false });
     if (oldUser) {
       var token = jwt.sign(
-        { name: oldUser.name, email: oldUser.email, role: oldUser.role },
+        {
+          data: {
+            name: oldUser.name,
+            email: oldUser.email,
+            role: oldUser.role,
+          },
+          exp: Math.floor(Date.now() / 1000) + 60 * 60,
+        },
         process.env.ENCRYPT_KEY
       );
       res.status(StatusCodes.OK).json({
@@ -107,7 +124,10 @@ const googleSignIn = async (req, res) => {
       const data = await newUser.save();
 
       var token = jwt.sign(
-        { name: data.name, email: data.email, role: data.role },
+        {
+          data: { name: data.name, email: data.email, role: data.role },
+          exp: Math.floor(Date.now() / 1000) + 60 * 60,
+        },
         process.env.ENCRYPT_KEY
       );
 

@@ -1,5 +1,6 @@
 // ====== --- ====== > Import Modules & Variables Declaration < ====== --- ====== //
 const posts = require("../model/post-model");
+const users = require("../../users/model/user-model");
 const bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
@@ -10,23 +11,31 @@ const { StatusCodes } = require("http-status-codes");
 //==// Add Post: is the logic of '/post/add' api that used to create new post with required fields.
 the response of this function in success (Post created successfully), in failure (show error message).
 */
+
 const addPost = async (req, res) => {
   try {
-    let { creator, title, message, tags, file, filePath } = req.body;
+    let { postName, title, message, tags, file, filePath } = req.body;
+    let { email } = req.decoded;
     let createdAt = new Date();
-    let newPost = new posts({
-      creator,
-      title,
-      message,
-      tags,
-      file,
-      filePath,
-      createdAt,
-    });
-    await newPost.save();
-    res
-      .status(StatusCodes.CREATED)
-      .json({ Message: "Post created successfully", post: newPost });
+
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      let newPost = new posts({
+        creator: oldUser._id,
+        postName,
+        title,
+        message,
+        tags,
+        file,
+        filePath,
+        createdAt,
+      });
+      await newPost.save();
+      res
+        .status(StatusCodes.CREATED)
+        .json({ Message: "Post created successfully", post: newPost });
+    } else
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "User not found" });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -53,22 +62,29 @@ the response of this function in success (data:post), in failure (show error mes
 */
 const editPost = async (req, res) => {
   try {
-    let { creator, title, message, tags } = req.body;
+    let { postName, title, message, tags, userId } = req.body;
     let { id } = req.params;
-
-    const data = await posts.findByIdAndUpdate(
-      id,
-      {
-        creator,
-        title,
-        message,
-        tags,
-      },
-      {
-        new: true,
-      }
-    );
-    res.status(StatusCodes.OK).json({ Message: "Success", post: data });
+    let { email } = req.decoded;
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      if (oldUser._id == userId) {
+        const data = await posts.findByIdAndUpdate(
+          id,
+          {
+            postName,
+            title,
+            message,
+            tags,
+          },
+          {
+            new: true,
+          }
+        );
+        res.status(StatusCodes.OK).json({ Message: "Success", post: data });
+      } else
+        res.status(StatusCodes.BAD_REQUEST).json({ message: "Not Post Owner" });
+    } else
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "User not found" });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -81,12 +97,21 @@ the response of this function in success ("Post deleted successfully"), in failu
 */
 const deletePost = async (req, res) => {
   try {
+    let { userId } = req.body;
+    let { email } = req.decoded;
     let { id } = req.params;
 
-    const data = await posts.findByIdAndDelete(id);
-    res
-      .status(StatusCodes.OK)
-      .json({ Message: "Post deleted successfully", post: data });
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      if (oldUser._id == userId) {
+        const data = await posts.findByIdAndDelete(id);
+        res
+          .status(StatusCodes.OK)
+          .json({ Message: "Post deleted successfully", post: data });
+      } else
+        res.status(StatusCodes.BAD_REQUEST).json({ message: "Not Post Owner" });
+    } else
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "User not found" });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -100,24 +125,38 @@ the response of this function in success (updated post), in failure (show error 
 const likePost = async (req, res) => {
   try {
     let { id } = req.params;
-    const oldPost = await posts.findById(id);
-    if (oldPost) {
-      const data = await posts.findByIdAndUpdate(
-        id,
-        {
-          likeCount: oldPost.likeCount + 1,
-        },
-        {
-          new: true,
-        }
-      );
-      res
-        .status(StatusCodes.OK)
-        .json({ Message: "Post Liked successfully", post: data });
+    console.log(req.decoded);
+    let { email } = req.decoded;
+
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      const oldPost = await posts.findById(id);
+      if (oldPost) {
+        let likes = oldPost.likeCount;
+        if (likes.includes(oldUser._id)) {
+          let index = likes.indexOf(oldUser._id);
+          likes.splice(index, 1);
+        } else likes.push(oldUser._id);
+        const data = await posts.findByIdAndUpdate(
+          id,
+          {
+            likeCount: likes,
+          },
+          {
+            new: true,
+          }
+        );
+        res
+          .status(StatusCodes.OK)
+          .json({ Message: "Post Liked successfully", post: data });
+      } else
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ Message: "Post not found", post: "" });
     } else
       res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ Message: "Post not found", post: "" });
+        .json({ Message: "User not found", post: "" });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });

@@ -4,7 +4,7 @@ const router = express.Router();
 const postFunctions = require("../controller/post-control");
 const postSchemas = require("../joi/post-joi");
 const validateRequest = require("../../../Common/Middlewares/requestValidation");
-// const userEndpoints = require("../endpoints");
+const postEndpoints = require("../post-endpoints");
 const isAuthorized = require("../../../Common/Middlewares/isAuthorized");
 /*
 //==// require express to create sub-object that will used to contains post apis
@@ -28,6 +28,7 @@ router.get(
 router.post(
   "/post/add",
   validateRequest(postSchemas.addPostSchema),
+  isAuthorized(postEndpoints.AddPost),
   postFunctions.addPost
 );
 
@@ -35,6 +36,7 @@ router.post(
 router.put(
   "/post/edit/:id",
   validateRequest(postSchemas.editPostSchema),
+  isAuthorized(postEndpoints.editPost),
   postFunctions.editPost
 );
 
@@ -42,6 +44,7 @@ router.put(
 router.delete(
   "/post/delete/:id",
   validateRequest(postSchemas.deletePostSchema),
+  isAuthorized(postEndpoints.deletePost),
   postFunctions.deletePost
 );
 
@@ -49,6 +52,7 @@ router.delete(
 router.patch(
   "/post/like/:id",
   validateRequest(postSchemas.likePostSchema),
+  isAuthorized(postEndpoints.likePost),
   postFunctions.likePost
 );
 

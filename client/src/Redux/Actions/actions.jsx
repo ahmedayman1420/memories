@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import {
   deletePostAPI,
   editPostAPI,
@@ -23,8 +25,8 @@ import {
   SIGNUP,
 } from "./actionStrings";
 
-export const addPostAction = (post) => async (dispatch) => {
-  const res = await addPostAPI(post);
+export const addPostAction = (post, googleAuth) => async (dispatch) => {
+  const res = await addPostAPI(post, googleAuth);
   dispatch({
     type: ADD_POST,
     payload: res.data.post,
@@ -39,27 +41,28 @@ export const getPostsAction = () => async (dispatch) => {
   });
 };
 
-export const editPostACtion = (post) => async (dispatch) => {
-  const res = await editPostAPI(post);
+export const editPostACtion = (post, googleAuth) => async (dispatch) => {
+  const res = await editPostAPI(post, googleAuth);
   dispatch({
     type: EDIT_POST,
     payload: res.data.post,
   });
 };
 
-export const likePostAction = (id) => async (dispatch) => {
-  const res = await likePostAPI(id);
+export const likePostAction = (post, googleAuth) => async (dispatch) => {
+  const res = await likePostAPI(post, googleAuth);
+  console.log(res);
   dispatch({
     type: LIKE_POST,
     payload: res.data.post,
   });
 };
 
-export const deletePostAction = (id) => async (dispatch) => {
-  const res = await deletePostAPI(id);
+export const deletePostAction = (post, googleAuth) => async (dispatch) => {
+  const res = await deletePostAPI(post, googleAuth);
   dispatch({
     type: DELETE_POST,
-    payload: id,
+    payload: post._id,
   });
 };
 
@@ -110,15 +113,20 @@ export const signInAction = (user) => async (dispatch) => {
 };
 
 export const googleAuthAction = (profile, token) => async (dispatch) => {
-  googleSigninAPI(token);
+  const res = await googleSigninAPI(token);
+  if (
+    res?.data?.message !== "Sign up Successfully with Google" &&
+    res?.data?.message !== "Sign in Successfully with Google"
+  )
+    return res;
   dispatch({
     type: GOOGLE_AUTH,
-    payload: { profile, token },
+    payload: { profile, token, user: res.data.data.user },
   });
 };
 
 export const logOutAction = () => async (dispatch) => {
-  dispatch({
+  await dispatch({
     type: LOGOUT,
   });
 };

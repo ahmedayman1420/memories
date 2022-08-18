@@ -12,20 +12,28 @@ const userJoi = {
       .object()
       .required()
       .keys({
-        creator: joi.string().required(),
+        postName: joi.string().required(),
         title: joi.string().required(),
         message: joi.string().required(),
         tags: joi.array().items(joi.string()).required(),
         file: joi.string().required(),
         filePath: joi.string().required(),
       }),
+    headers: joi
+      .object()
+      .required()
+      .keys({
+        authorization: joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
   },
   editPostSchema: {
     body: joi
       .object()
       .required()
       .keys({
-        creator: joi.string().required(),
+        userId: joi.string().required(),
+        postName: joi.string().required(),
         title: joi.string().required(),
         message: joi.string().required(),
         tags: joi.array().items(joi.string()).required(),
@@ -33,16 +41,40 @@ const userJoi = {
     params: joi.object().required().keys({
       id: joi.string().required(),
     }),
+    headers: joi
+      .object()
+      .required()
+      .keys({
+        authorization: joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
   },
   deletePostSchema: {
+    body: joi.object().required().keys({
+      userId: joi.string().required(),
+    }),
     params: joi.object().required().keys({
       id: joi.string().required(),
     }),
+    headers: joi
+      .object()
+      .required()
+      .keys({
+        authorization: joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
   },
   likePostSchema: {
     params: joi.object().required().keys({
       id: joi.string().required(),
     }),
+    headers: joi
+      .object()
+      .required()
+      .keys({
+        authorization: joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
   },
 };
 

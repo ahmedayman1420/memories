@@ -16,14 +16,17 @@ const postSchema = mongoose.Schema(
       required: true,
     },
     creator: { type: String, required: true }, // relate this field with user collection
+    postName: { type: String, required: true },
     tags: [{ type: String, required: true }],
     file: { type: String, required: true },
     filePath: { type: String, required: true },
-    likeCount: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+    likeCount: [
+      {
+        type: String,
+        required: true,
+        default: [],
+      },
+    ],
     createdAt: {
       type: Date,
       default: new Date(),

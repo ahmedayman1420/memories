@@ -8,17 +8,22 @@ import jwt_decode from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { logOutAction } from "../../Redux/Actions/actions";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Navigationbar() {
   const dispatch = useDispatch();
   const memoryProfile = JSON.parse(localStorage.getItem("memoryProfile"));
   const [user, setUser] = useState(null);
-
+  let navigate = useNavigate();
   let location = useLocation();
   useEffect(() => {
     try {
       var decoded = jwt_decode(memoryProfile?.token);
-      setUser(decoded);
+      if (decoded.exp * 1000 < new Date().getTime()) {
+        dispatch(logOutAction());
+        navigate("/auth", { replace: true });
+      }
+      setUser(decoded?.data || decoded);
     } catch (error) {
       setUser(null);
       console.log(error);
@@ -29,7 +34,6 @@ function Navigationbar() {
     <>
       <Navbar
         className={[Style.titleContainer, "w-75 m-auto p-2 mt-4"].join(" ")}
-        fixed="top"
         bg="light"
         expand="lg"
       >

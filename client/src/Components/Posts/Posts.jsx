@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getPostsAction } from "../../Redux/Actions/actions";
+import PaginationPosts from "../PaginationPosts/PaginationPosts";
 import Post from "./Post/Post";
 
 function Posts() {
@@ -20,7 +21,11 @@ function Posts() {
   return (
     <>
       {waiting && <h1>Wait ...</h1>}
-      {!waiting && <Post />}
+      {!waiting && (
+        <div>
+          <Post /> <PaginationPosts />
+        </div>
+      )}
     </>
   );
 }

@@ -1,10 +1,16 @@
 // ====== --- ====== > Modules endpoints < ====== --- ====== //
 const Rbac = require("easy-rbac");
+const postEndpoints = require("../../modules/posts/post-endpoints");
 const userEndpoints = require("../../modules/users/user-endpoints");
 const roles = require("../Enum/roles");
 
 // ====== --- ====== > Roles policies < ====== --- ====== //
-const userPolicies = [userEndpoints.updateUserPassword];
+const userPolicies = [
+  postEndpoints.AddPost,
+  postEndpoints.editPost,
+  postEndpoints.deletePost,
+  postEndpoints.likePost,
+];
 const adminPolicies = [];
 const superAdminPolicies = [];
 

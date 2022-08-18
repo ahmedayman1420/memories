@@ -17,16 +17,16 @@ import {
 
 function AddPostForm() {
   const dispatch = useDispatch();
+  const googleAuth = useSelector((state) => state.googleAuth);
   const error = useSelector((state) => state.error);
   const postId = useSelector((state) => state.postId);
   const [post, setPost] = useState({
-    creator: "",
+    postName: "",
     title: "",
     message: "",
     tags: [],
     file: "",
   });
-
   const posts = useSelector((state) => state.posts);
   const [waiting, setWaiting] = useState(false);
   const [editState, setEditState] = useState(false);
@@ -45,7 +45,7 @@ function AddPostForm() {
   const clearForm = (e) => {
     e.preventDefault();
     setPost({
-      creator: "",
+      postName: "",
       title: "",
       message: "",
       tags: [],
@@ -65,7 +65,7 @@ function AddPostForm() {
       });
       if (result) {
         await dispatch(errorResetAction());
-        await dispatch(addPostAction(post));
+        await dispatch(addPostAction(post, googleAuth));
         clearForm(e);
       } else await dispatch(unexpectedErrorAction(ERROR_ADD_POST));
     } else {
@@ -75,7 +75,7 @@ function AddPostForm() {
       });
       if (result) {
         await dispatch(errorResetAction());
-        await dispatch(editPostACtion(post));
+        await dispatch(editPostACtion(post, googleAuth));
         dispatch(resetIdACtion());
         setEditState(false);
         clearForm(e);
@@ -108,11 +108,11 @@ function AddPostForm() {
           <Form.Group className="mb-3" controlId="formBasicCreator">
             <Form.Control
               onChange={savePostData}
-              name="creator"
+              name="postName"
               type="text"
               placeholder="Creator"
               required={true}
-              value={post.creator}
+              value={post.postName}
             />
           </Form.Group>
 
