@@ -76,6 +76,19 @@ const userJoi = {
       })
       .options({ allowUnknown: true }),
   },
+  searchPostSchema: {
+    query: joi.object().required().keys({
+      titles: joi.string().required(),
+      tags: joi.string().required(),
+    }),
+    headers: joi
+      .object()
+      .required()
+      .keys({
+        authorization: joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
+  },
 };
 
 /* ============= /// <==> Exports User Joi Validations <==> /// ============= */

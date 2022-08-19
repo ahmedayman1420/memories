@@ -56,5 +56,13 @@ router.patch(
   postFunctions.likePost
 );
 
+// search post api
+router.get(
+  "/post/search/",
+  validateRequest(postSchemas.searchPostSchema),
+  isAuthorized(postEndpoints.searchPost),
+  postFunctions.searchPost
+);
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = router;

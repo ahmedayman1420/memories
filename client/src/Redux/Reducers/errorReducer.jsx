@@ -2,6 +2,7 @@ import {
   ERROR_ADD_POST,
   ERROR_EDIT_POST,
   ERROR_RESET,
+  ERROR_SEARCH_POST,
   ERROR_SIGNIN,
   ERROR_SIGNUP,
 } from "../Actions/actionStrings";
@@ -9,16 +10,19 @@ import {
 const errorReducer = (state = { value: false, message: "" }, action) => {
   switch (action.type) {
     case ERROR_ADD_POST:
-      return action.payload;
+      return { ...action.payload, type: "post" };
 
     case ERROR_EDIT_POST:
-      return action.payload;
+      return { ...action.payload, type: "post" };
 
     case ERROR_SIGNUP:
-      return action.payload;
+      return { ...action.payload, type: "auth" };
 
     case ERROR_SIGNIN:
-      return action.payload;
+      return { ...action.payload, type: "auth" };
+
+    case ERROR_SEARCH_POST:
+      return { ...action.payload, type: "search" };
 
     case ERROR_RESET:
       return action.payload;

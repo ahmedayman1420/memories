@@ -80,7 +80,7 @@ function Authentication() {
         if (res?.data?.message === "Sign in Successfully") {
           setSuccess(true);
           await dispatch(errorResetAction());
-          navigate("/", { replace: true });
+          navigate("/posts", { replace: true });
         } else {
           await dispatch(unexpectedErrorAction(ERROR_SIGNIN));
         }
@@ -89,7 +89,7 @@ function Authentication() {
       }
       setWaiting(false);
     } else {
-      // ====== ---- ====== Signin ====== ---- ====== //
+      // ====== ---- ====== Signup ====== ---- ====== //
       let result = Object.values(user).every((p) => {
         return p !== "" && !/^\s/.test(p);
       });
@@ -107,7 +107,7 @@ function Authentication() {
           setSuccess(true);
           await dispatch(errorResetAction());
           setWaiting(false);
-          navigate("/", { replace: true });
+          navigate("/posts", { replace: true });
         } else {
           setWaiting(false);
           await dispatch(unexpectedErrorAction(ERROR_SIGNUP));
@@ -124,7 +124,7 @@ function Authentication() {
     const profile = res?.profileObj;
     const token = res?.tokenId;
     await dispatch(googleAuthAction(profile, token));
-    await navigate("/", { replace: true });
+    await navigate("/posts", { replace: true });
   };
 
   const responseGoogleFailure = async (error) => {
@@ -208,7 +208,7 @@ function Authentication() {
                 />
               </Form.Group>
             )}
-            {error.value && (
+            {error.value && error.type === "auth" && (
               <Alert variant="danger">
                 <Alert.Heading>{error.message}</Alert.Heading>
               </Alert>

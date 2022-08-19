@@ -163,6 +163,53 @@ const likePost = async (req, res) => {
   }
 };
 
+/*
+//==// Search Post: is the logic of '/post/search/?searchQuery='value'&tags='value' api that used to search for specific post.
+the response of this function in success (posts), in failure (show error message).
+*/
+const searchPost = async (req, res) => {
+  try {
+    let { titles, tags } = req.query;
+    let { email } = req.decoded;
+
+    tags = tags.split(",");
+    titles = titles.split(",");
+
+    console.log({ titles });
+    console.log({ tags });
+
+    let insensitiveTitles = [];
+    titles.forEach(function (item) {
+      var re = new RegExp(item, "i");
+      insensitiveTitles.push(re);
+    });
+
+    let insensitiveTags = [];
+    tags.forEach(function (item) {
+      var re = new RegExp(item, "i");
+      insensitiveTags.push(re);
+    });
+
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      const data = await posts.find({
+        $or: [
+          { title: { $in: insensitiveTitles } },
+          { tags: { $in: insensitiveTags } },
+        ],
+      });
+
+      res.status(StatusCodes.OK).json({ message: "Found Posts", posts: data });
+    } else
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "User not found", post: "" });
+  } catch (error) {
+    console.log(error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error);
+  }
+};
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = {
   addPost,
@@ -170,4 +217,5 @@ module.exports = {
   editPost,
   deletePost,
   likePost,
+  searchPost,
 };

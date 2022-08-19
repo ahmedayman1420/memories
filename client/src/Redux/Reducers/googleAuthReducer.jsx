@@ -1,9 +1,18 @@
-import { GOOGLE_AUTH, LOGOUT, SIGNIN, SIGNUP } from "../Actions/actionStrings";
+import {
+  GOOGLE_AUTH,
+  LOGOUT,
+  SIGNIN,
+  SIGNUP,
+  UPDATE_GOOGLE_AUTH,
+} from "../Actions/actionStrings";
 
 const googleAuthReducer = (state = {}, action) => {
   switch (action.type) {
     case GOOGLE_AUTH:
       localStorage.setItem("memoryProfile", JSON.stringify(action.payload));
+      return action.payload;
+
+    case UPDATE_GOOGLE_AUTH:
       return action.payload;
 
     case SIGNUP:

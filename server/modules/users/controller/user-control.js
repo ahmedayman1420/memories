@@ -58,6 +58,7 @@ const signIn = async (req, res) => {
     let { email, password } = req.body;
     const oldUser = await users.findOne({ email, isDeleted: false });
     if (oldUser) {
+      let cdate = Date.now();
       let match = bcrypt.compare(
         password,
         oldUser.password,
@@ -70,7 +71,7 @@ const signIn = async (req, res) => {
                   email: oldUser.email,
                   role: oldUser.role,
                 },
-                exp: Math.floor(Date.now() / 1000) + 60 * 60,
+                exp: Math.floor(cdate / 1000) + 60 * 60,
               },
               process.env.ENCRYPT_KEY
             );

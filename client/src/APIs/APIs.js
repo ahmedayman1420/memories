@@ -91,6 +91,24 @@ export const likePostAPI = async (post, googleAuth) => {
   }
 };
 
+export const searchPostAPI = async (titles, tags, googleAuth) => {
+  try {
+    console.log({ titles });
+    console.log({ tags });
+    const res = await axios.get(
+      `${baseURL}post/search?titles=${titles}&tags=${tags}`,
+      {
+        headers: {
+          authorization: `Bearer ${googleAuth.token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const signUpAPI = async (user) => {
   try {
     const res = await axios.post(`${baseURL}user/signup`, user);

@@ -10,6 +10,7 @@ const userPolicies = [
   postEndpoints.editPost,
   postEndpoints.deletePost,
   postEndpoints.likePost,
+  postEndpoints.searchPost,
 ];
 const adminPolicies = [];
 const superAdminPolicies = [];

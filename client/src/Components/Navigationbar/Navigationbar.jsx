@@ -5,30 +5,53 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { NavLink } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-import { useDispatch } from "react-redux";
-import { logOutAction } from "../../Redux/Actions/actions";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  logOutAction,
+  serachPostAction,
+  updateGoogleAuthAction,
+} from "../../Redux/Actions/actions";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 function Navigationbar() {
   const dispatch = useDispatch();
   const memoryProfile = JSON.parse(localStorage.getItem("memoryProfile"));
+  const googleAuth = useSelector((state) => state.googleAuth);
   const [user, setUser] = useState(null);
   let navigate = useNavigate();
   let location = useLocation();
+
   useEffect(() => {
-    try {
-      var decoded = jwt_decode(memoryProfile?.token);
-      if (decoded.exp * 1000 < new Date().getTime()) {
-        dispatch(logOutAction());
+    const fun = async () => {
+      try {
+        if (location.pathname !== "/auth") {
+          var decoded = jwt_decode(memoryProfile?.token);
+          let exp = new Date().getTime();
+          if (decoded.exp * 1000 > exp) {
+            if (Object.keys(googleAuth).length === 0) {
+              console.log("INSIDE");
+              await dispatch(updateGoogleAuthAction(memoryProfile));
+            }
+            setUser(memoryProfile?.profile || decoded.data);
+          } else {
+            setUser(null);
+            localStorage.clear();
+            navigate("/auth", { replace: true });
+          }
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        setUser(null);
+        localStorage.clear();
         navigate("/auth", { replace: true });
+        console.log(error);
       }
-      setUser(decoded?.data || decoded);
-    } catch (error) {
-      setUser(null);
-      console.log(error);
-    }
-  }, [location]);
+    };
+
+    fun();
+  }, [location, dispatch]);
 
   return (
     <>
@@ -41,7 +64,7 @@ function Navigationbar() {
           <Navbar.Brand
             className="d-flex align-items-center"
             as={NavLink}
-            to="/"
+            to="/posts"
           >
             <h3 className={["title text-info"].join(" ")}>Memories</h3>
           </Navbar.Brand>
@@ -50,7 +73,7 @@ function Navigationbar() {
             <Nav className="ms-auto">
               {user && (
                 <div className="d-flex align-items-center">
-                  {user.picture && (
+                  {user.imageUrl && (
                     <img
                       style={{
                         width: "50px",
@@ -58,7 +81,7 @@ function Navigationbar() {
                         borderRadius: "50%",
                         marginRight: "10px",
                       }}
-                      src={user.picture}
+                      src={user.imageUrl}
                       alt=""
                     />
                   )}

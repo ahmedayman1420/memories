@@ -7,13 +7,14 @@ import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleUp } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 function App() {
   // const posts = useSelector((state) => state.posts);
   // console.log({ posts });
 
   const [visible, setVisible] = useState(false);
-
+  const googleAuth = useSelector((state) => state.googleAuth);
   const toggleVisible = () => {
     const scrolled = document.documentElement.scrollTop;
     if (scrolled > 300) {
@@ -43,21 +44,21 @@ function App() {
             <Route exact path="/posts" element={<Home />} />
             <Route
               exact
-              path="/"
-              element={<Navigate to="/posts" replace={true} />}
-            />
-            <Route
-              exact
               path="/home"
               element={<Navigate to="/posts" replace={true} />}
             />
+            <Route exact path="/posts/search" element={<Home />} />
           </Route>
 
           <Route path="/auth" element={<Authentication />} />
-          <Route path="/*" element={<Navigate to="/" replace={true} />} />
+          <Route
+            exact
+            path="/"
+            element={<Navigate to="/auth" replace={true} />}
+          />
+          <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
 
-        
         <FontAwesomeIcon
           className="position-fixed"
           style={{

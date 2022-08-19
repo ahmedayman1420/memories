@@ -168,7 +168,7 @@ function AddPostForm() {
             )}
           </Form.Group>
 
-          {error.value && (
+          {error.value && error.type === "post" && (
             <Alert variant="danger">
               <Alert.Heading>{error.message}</Alert.Heading>
             </Alert>

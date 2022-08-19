@@ -9,6 +9,7 @@ import {
   signInAPI,
   signUpAPI,
   googleSigninAPI,
+  searchPostAPI,
 } from "../../APIs/APIs";
 import {
   ADD_POST,
@@ -21,8 +22,10 @@ import {
   LIKE_POST,
   LOGOUT,
   RESET_ID,
+  SEARCH_POST,
   SIGNIN,
   SIGNUP,
+  UPDATE_GOOGLE_AUTH,
 } from "./actionStrings";
 
 export const addPostAction = (post, googleAuth) => async (dispatch) => {
@@ -72,6 +75,16 @@ export const setEditPostIdAction = (id) => async (dispatch) => {
     payload: id,
   });
 };
+
+export const serachPostAction =
+  (titles, tags, googleAuth) => async (dispatch) => {
+    const res = await searchPostAPI(titles, tags, googleAuth);
+    dispatch({
+      type: SEARCH_POST,
+      payload: res.data.posts, // Will be changed
+    });
+  };
+
 export const resetIdACtion = () => async (dispatch) => {
   dispatch({
     type: RESET_ID,
@@ -95,7 +108,7 @@ export const errorResetAction = () => async (dispatch) => {
 export const signUpAction = (user) => async (dispatch) => {
   const res = await signUpAPI(user);
   if (res?.data?.message !== "Sign up Successfully") return res;
-  dispatch({
+  await dispatch({
     type: SIGNUP,
     payload: { user: res.data.data.user, token: res.data.data.token },
   });
@@ -105,7 +118,7 @@ export const signUpAction = (user) => async (dispatch) => {
 export const signInAction = (user) => async (dispatch) => {
   const res = await signInAPI(user);
   if (res?.data?.message !== "Sign in Successfully") return res;
-  dispatch({
+  await dispatch({
     type: SIGNIN,
     payload: { user: res.data.data.user, token: res.data.data.token },
   });
@@ -119,9 +132,16 @@ export const googleAuthAction = (profile, token) => async (dispatch) => {
     res?.data?.message !== "Sign in Successfully with Google"
   )
     return res;
-  dispatch({
+  await dispatch({
     type: GOOGLE_AUTH,
     payload: { profile, token, user: res.data.data.user },
+  });
+};
+
+export const updateGoogleAuthAction = (googleAuth) => async (dispatch) => {
+  await dispatch({
+    type: UPDATE_GOOGLE_AUTH,
+    payload: googleAuth,
   });
 };
 
