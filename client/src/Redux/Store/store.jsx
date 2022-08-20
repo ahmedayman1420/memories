@@ -7,6 +7,7 @@ const initialState = {
   error: { value: false, message: "" },
   postId: "",
   postCount: 0,
+  postDetails: {},
 };
 
 export const store = createStore(

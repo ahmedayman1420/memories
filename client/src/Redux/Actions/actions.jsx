@@ -10,6 +10,7 @@ import {
   signUpAPI,
   googleSigninAPI,
   searchPostAPI,
+  getPostAPI,
 } from "../../APIs/APIs";
 import {
   ADD_POST,
@@ -26,6 +27,7 @@ import {
   RESET_ID,
   SEARCH_POST,
   SET_POST_COUNT,
+  SET_POST_DETAILS,
   SIGNIN,
   SIGNUP,
   UPDATE_GOOGLE_AUTH,
@@ -55,6 +57,14 @@ export const getPostsAction =
       payload: res.data.totalCount,
     });
   };
+
+export const getPostAction = (id, googleAuth) => async (dispatch) => {
+  const res = await getPostAPI(id, googleAuth);
+  dispatch({
+    type: SET_POST_DETAILS,
+    payload: res.data.post,
+  });
+};
 
 export const editPostACtion = (post, googleAuth) => async (dispatch) => {
   const res = await editPostAPI(post, googleAuth);

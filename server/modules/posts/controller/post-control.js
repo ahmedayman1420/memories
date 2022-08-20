@@ -216,7 +216,7 @@ const searchPost = async (req, res) => {
           { tags: { $in: insensitiveTags } },
         ],
       });
-      
+
       const data = await posts
         .find({
           $or: [
@@ -241,6 +241,26 @@ const searchPost = async (req, res) => {
   }
 };
 
+/*
+//==// Get Post: is the logic of '/post/:id' api that used to get specific post by id.
+the response of this function in success (data:post), in failure (show error message).
+*/
+const getPost = async (req, res) => {
+  try {
+    let { id } = req.params;
+    let { email } = req.decoded;
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      const data = await posts.findOne({ _id: id, isDeleted: false });
+      res.status(StatusCodes.OK).json({ message: "Found Posts", post: data });
+    } else
+      res.status(StatusCodes.BAD_REQUEST).json({ message: "User not found" });
+  } catch (error) {
+    console.log({ error });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+  }
+};
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = {
   addPost,
@@ -249,4 +269,5 @@ module.exports = {
   deletePost,
   likePost,
   searchPost,
+  getPost,
 };

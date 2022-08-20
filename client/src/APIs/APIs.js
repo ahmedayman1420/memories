@@ -30,6 +30,19 @@ export const getAllPostsAPI = async (page) => {
   }
 };
 
+export const getPostAPI = async (id, googleAuth) => {
+  try {
+    const res = await axios.get(`${baseURL}post/detail/${id}`, {
+      headers: {
+        authorization: `Bearer ${googleAuth.token}`,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const editPostAPI = async (post, googleAuth) => {
   try {
     const res = await axios.put(

@@ -20,7 +20,7 @@ const isAuthorized = require("../../../Common/Middlewares/isAuthorized");
 // get posts api
 router.get(
   "/posts",
-    validateRequest(postSchemas.getPostsSchema),
+  validateRequest(postSchemas.getPostsSchema),
   postFunctions.getPosts
 );
 
@@ -62,6 +62,14 @@ router.get(
   validateRequest(postSchemas.searchPostSchema),
   isAuthorized(postEndpoints.searchPost),
   postFunctions.searchPost
+);
+
+// get post by id api
+router.get(
+  "/post/detail/:id",
+  validateRequest(postSchemas.getPostSchema),
+  isAuthorized(postEndpoints.getPost),
+  postFunctions.getPost
 );
 
 // ====== --- ====== > Export Module < ====== --- ====== //

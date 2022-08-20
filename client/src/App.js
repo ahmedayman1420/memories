@@ -8,9 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleUp } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import PostDetails from "./Components/PostDetails/PostDetails";
 
 function App() {
-
   const [visible, setVisible] = useState(false);
   const googleAuth = useSelector((state) => state.googleAuth);
   const toggleVisible = () => {
@@ -46,9 +46,10 @@ function App() {
               element={<Navigate to="/posts" replace={true} />}
             />
             <Route exact path="/posts/search" element={<Home />} />
+            <Route exact path="/post/details/:id" element={<PostDetails />} />
           </Route>
 
-          <Route path="/auth" element={<Authentication />} />
+          <Route exact path="/auth" element={<Authentication />} />
           <Route
             exact
             path="/"

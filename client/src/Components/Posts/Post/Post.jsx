@@ -17,6 +17,7 @@ import {
   likePostAction,
   setEditPostIdAction,
 } from "../../../Redux/Actions/actions";
+import { useNavigate } from "react-router-dom";
 
 function Post() {
   const posts = useSelector((state) => state.posts);
@@ -26,6 +27,7 @@ function Post() {
   const [waitingDelete, setWaitingDelete] = useState(false);
   const [deletedPostId, setdDletedPostId] = useState("");
   const [editedPostId, setdEditedPostId] = useState("");
+  let navigate = useNavigate();
 
   return (
     <>
@@ -35,7 +37,14 @@ function Post() {
             <div className="col-md-12" key={post._id}>
               <div className="m-auto col-md-6 flex-wrap mb-4">
                 <Card style={{ width: "" }} className={Style.cardParent}>
-                  <Card.Img variant="top" src={post.file} />
+                  <Card.Img
+                    style={{ cursor: "pointer" }}
+                    variant="top"
+                    src={post.file}
+                    onClick={() => {
+                      navigate(`/post/details/${post._id}`, { replace: true });
+                    }}
+                  />
                   <Card.Body>
                     <Card.Text>
                       {post.tags

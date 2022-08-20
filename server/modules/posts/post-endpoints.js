@@ -4,6 +4,7 @@ const editPost = "Post:editPost";
 const deletePost = "Post:deletePost";
 const likePost = "Post:likePost";
 const searchPost = "Post:searchPost";
+const getPost = "Post:getPost";
 
 const postEndpoints = {
   AddPost,
@@ -11,6 +12,7 @@ const postEndpoints = {
   deletePost,
   likePost,
   searchPost,
+  getPost,
 };
 
 // ====== --- ====== > Export post endpoints < ====== --- ====== //
