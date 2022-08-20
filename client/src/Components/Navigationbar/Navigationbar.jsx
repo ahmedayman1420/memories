@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getPostsAction,
   logOutAction,
   serachPostAction,
   updateGoogleAuthAction,
@@ -30,7 +31,6 @@ function Navigationbar() {
           let exp = new Date().getTime();
           if (decoded.exp * 1000 > exp) {
             if (Object.keys(googleAuth).length === 0) {
-              console.log("INSIDE");
               await dispatch(updateGoogleAuthAction(memoryProfile));
             }
             setUser(memoryProfile?.profile || decoded.data);
@@ -66,7 +66,17 @@ function Navigationbar() {
             as={NavLink}
             to="/posts"
           >
-            <h3 className={["title text-info"].join(" ")}>Memories</h3>
+            <h3
+              onClick={async () => {
+                await dispatch(getPostsAction(1));
+                navigate(`/posts?page=${1}`, {
+                  replace: true,
+                });
+              }}
+              className={["title text-info"].join(" ")}
+            >
+              Memories
+            </h3>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">

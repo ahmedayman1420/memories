@@ -80,6 +80,7 @@ const userJoi = {
     query: joi.object().required().keys({
       titles: joi.string().required(),
       tags: joi.string().required(),
+      page: joi.string().required(),
     }),
     headers: joi
       .object()
@@ -88,6 +89,12 @@ const userJoi = {
         authorization: joi.string().required(),
       })
       .options({ allowUnknown: true }),
+  },
+
+  getPostsSchema: {
+    query: joi.object().required().keys({
+      page: joi.string().required(),
+    }),
   },
 };
 

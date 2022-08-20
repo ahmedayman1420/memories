@@ -10,8 +10,6 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 function App() {
-  // const posts = useSelector((state) => state.posts);
-  // console.log({ posts });
 
   const [visible, setVisible] = useState(false);
   const googleAuth = useSelector((state) => state.googleAuth);
@@ -65,10 +63,10 @@ function App() {
             display: visible ? "inline" : "none",
             right: "3%",
             bottom: "3%",
-            color: "#09c",
+            color: "black",
             cursor: "pointer",
           }}
-          size="3x"
+          size="2x"
           icon={faArrowCircleUp}
           onClick={scrollToTop}
         />

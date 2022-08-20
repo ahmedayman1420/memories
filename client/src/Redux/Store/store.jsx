@@ -6,12 +6,11 @@ const initialState = {
   posts: [],
   error: { value: false, message: "" },
   postId: "",
+  postCount: 0,
 };
 
 export const store = createStore(
   reducers,
   initialState,
-  compose(
-    applyMiddleware(thunk),
-  )
+  compose(applyMiddleware(thunk))
 );

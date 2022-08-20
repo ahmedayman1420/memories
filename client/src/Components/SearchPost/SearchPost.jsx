@@ -29,7 +29,6 @@ function SearchPost() {
   const deleteChip = (name, index) => {
     let arr = searchPost[name];
     arr.splice(index, 1);
-    console.log(arr);
     setSearchPost({ ...searchPost, [name]: arr });
   };
 
@@ -56,7 +55,9 @@ function SearchPost() {
         serachPostAction(searchPost.titles, searchPost.tags, googleAuth)
       );
       navigate(
-        `/posts/search?titles=${searchPost.titles}&tags=${searchPost.tags}`,
+        `/posts/search?titles=${searchPost.titles}&tags=${
+          searchPost.tags
+        }&page=${1}`,
         {
           replace: true,
         }

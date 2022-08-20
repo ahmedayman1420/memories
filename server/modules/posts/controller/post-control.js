@@ -48,8 +48,22 @@ the response of this function in success (data:posts), in failure (show error me
 */
 const getPosts = async (req, res) => {
   try {
-    const data = await posts.find({ isDeleted: false });
-    res.status(StatusCodes.OK).json({ Message: "Success", posts: data });
+    let { page } = req.query;
+    page = Number(page);
+
+    const limit = 2;
+    let startIndex = (page - 1) * limit;
+
+    const totalCount = await posts.countDocuments({});
+
+    const data = await posts
+      .find({ isDeleted: false })
+      .sort({ _id: -1 })
+      .limit(limit)
+      .skip(startIndex);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Success", posts: data, totalCount });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -169,8 +183,12 @@ the response of this function in success (posts), in failure (show error message
 */
 const searchPost = async (req, res) => {
   try {
-    let { titles, tags } = req.query;
+    let { titles, tags, page } = req.query;
     let { email } = req.decoded;
+
+    page = Number(page);
+    const limit = 2;
+    let startIndex = (page - 1) * limit;
 
     tags = tags.split(",");
     titles = titles.split(",");
@@ -192,14 +210,27 @@ const searchPost = async (req, res) => {
 
     const oldUser = await users.findOne({ email, isDeleted: false });
     if (oldUser) {
-      const data = await posts.find({
+      const totalCount = await posts.countDocuments({
         $or: [
           { title: { $in: insensitiveTitles } },
           { tags: { $in: insensitiveTags } },
         ],
       });
+      
+      const data = await posts
+        .find({
+          $or: [
+            { title: { $in: insensitiveTitles } },
+            { tags: { $in: insensitiveTags } },
+          ],
+        })
+        .sort({ _id: -1 })
+        .limit(limit)
+        .skip(startIndex);
 
-      res.status(StatusCodes.OK).json({ message: "Found Posts", posts: data });
+      res
+        .status(StatusCodes.OK)
+        .json({ message: "Found Posts", posts: data, totalCount });
     } else
       res
         .status(StatusCodes.BAD_REQUEST)

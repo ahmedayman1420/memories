@@ -17,3 +17,6 @@ export const SIGNIN = "SIGNIN";
 export const GOOGLE_AUTH = "GOOGLE_AUTH";
 export const UPDATE_GOOGLE_AUTH = "UPDATE_GOOGLE_AUTH";
 export const LOGOUT = "LOGOUT";
+export const INCREASE_POST_COUNT = "INCREASE_POST_COUNT";
+export const DECREASE_POST_COUNT = "DECREASE_POST_COUNT";
+export const SET_POST_COUNT = "SET_POST_COUNT";

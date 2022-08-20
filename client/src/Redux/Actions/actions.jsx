@@ -13,16 +13,19 @@ import {
 } from "../../APIs/APIs";
 import {
   ADD_POST,
+  DECREASE_POST_COUNT,
   DELETE_POST,
   EDIT_POST,
   EDIT_POST_ID,
   ERROR_RESET,
   GET_POSTS,
   GOOGLE_AUTH,
+  INCREASE_POST_COUNT,
   LIKE_POST,
   LOGOUT,
   RESET_ID,
   SEARCH_POST,
+  SET_POST_COUNT,
   SIGNIN,
   SIGNUP,
   UPDATE_GOOGLE_AUTH,
@@ -34,15 +37,24 @@ export const addPostAction = (post, googleAuth) => async (dispatch) => {
     type: ADD_POST,
     payload: res.data.post,
   });
-};
-
-export const getPostsAction = () => async (dispatch) => {
-  const res = await getAllPostsAPI();
   dispatch({
-    type: GET_POSTS,
-    payload: res.data.posts,
+    type: INCREASE_POST_COUNT,
   });
 };
+
+export const getPostsAction =
+  (page = 1) =>
+  async (dispatch) => {
+    const res = await getAllPostsAPI(page);
+    dispatch({
+      type: GET_POSTS,
+      payload: res.data.posts,
+    });
+    dispatch({
+      type: SET_POST_COUNT,
+      payload: res.data.totalCount,
+    });
+  };
 
 export const editPostACtion = (post, googleAuth) => async (dispatch) => {
   const res = await editPostAPI(post, googleAuth);
@@ -54,7 +66,6 @@ export const editPostACtion = (post, googleAuth) => async (dispatch) => {
 
 export const likePostAction = (post, googleAuth) => async (dispatch) => {
   const res = await likePostAPI(post, googleAuth);
-  console.log(res);
   dispatch({
     type: LIKE_POST,
     payload: res.data.post,
@@ -67,6 +78,9 @@ export const deletePostAction = (post, googleAuth) => async (dispatch) => {
     type: DELETE_POST,
     payload: post._id,
   });
+  dispatch({
+    type: DECREASE_POST_COUNT,
+  });
 };
 
 export const setEditPostIdAction = (id) => async (dispatch) => {
@@ -77,11 +91,16 @@ export const setEditPostIdAction = (id) => async (dispatch) => {
 };
 
 export const serachPostAction =
-  (titles, tags, googleAuth) => async (dispatch) => {
-    const res = await searchPostAPI(titles, tags, googleAuth);
+  (titles, tags, googleAuth, page = 1) =>
+  async (dispatch) => {
+    const res = await searchPostAPI(titles, tags, googleAuth, page);
     dispatch({
       type: SEARCH_POST,
       payload: res.data.posts, // Will be changed
+    });
+    dispatch({
+      type: SET_POST_COUNT,
+      payload: res.data.totalCount,
     });
   };
 

@@ -20,7 +20,7 @@ const isAuthorized = require("../../../Common/Middlewares/isAuthorized");
 // get posts api
 router.get(
   "/posts",
-  //   validateRequest(userSchemas.signupSchema),
+    validateRequest(postSchemas.getPostsSchema),
   postFunctions.getPosts
 );
 

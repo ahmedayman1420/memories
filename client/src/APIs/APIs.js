@@ -21,9 +21,9 @@ export const addPostAPI = async (post, googleAuth) => {
   }
 };
 
-export const getAllPostsAPI = async () => {
+export const getAllPostsAPI = async (page) => {
   try {
-    const res = await axios.get(`${baseURL}posts`);
+    const res = await axios.get(`${baseURL}posts?page=${page}`);
     return res;
   } catch (error) {
     console.log(error);
@@ -91,12 +91,10 @@ export const likePostAPI = async (post, googleAuth) => {
   }
 };
 
-export const searchPostAPI = async (titles, tags, googleAuth) => {
+export const searchPostAPI = async (titles, tags, googleAuth, page) => {
   try {
-    console.log({ titles });
-    console.log({ tags });
     const res = await axios.get(
-      `${baseURL}post/search?titles=${titles}&tags=${tags}`,
+      `${baseURL}post/search?titles=${titles}&tags=${tags}&page=${page}`,
       {
         headers: {
           authorization: `Bearer ${googleAuth.token}`,

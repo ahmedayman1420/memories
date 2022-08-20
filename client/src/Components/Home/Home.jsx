@@ -3,7 +3,6 @@ import AddPostForm from "../AddPostForm/AddPostForm";
 import Style from "./Home.module.scss";
 import Posts from "../Posts/Posts";
 import SearchPost from "../SearchPost/SearchPost";
-import Pagination from "rc-pagination";
 
 function Home() {
   return (
@@ -20,7 +19,6 @@ function Home() {
               </div>
             </div>
             <Posts />
-            <Pagination />
           </div>
         </div>
       </div>
