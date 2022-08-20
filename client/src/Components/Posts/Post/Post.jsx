@@ -37,7 +37,13 @@ function Post() {
                 <Card style={{ width: "" }} className={Style.cardParent}>
                   <Card.Img variant="top" src={post.file} />
                   <Card.Body>
-                    <Card.Text>{post.tags.join(" ")}</Card.Text>
+                    <Card.Text>
+                      {post.tags
+                        .map((value, index) => {
+                          return "#" + value;
+                        })
+                        .join(" ")}
+                    </Card.Text>
                     <Card.Title>{post.title}</Card.Title>
                     <Card.Text>{post.message}</Card.Text>
                   </Card.Body>
