@@ -187,7 +187,7 @@ const searchPost = async (req, res) => {
     let { email } = req.decoded;
 
     page = Number(page);
-    const limit = 2;
+    const limit = 10;
     let startIndex = (page - 1) * limit;
 
     tags = tags.split(",");
