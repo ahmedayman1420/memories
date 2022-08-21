@@ -1,6 +1,6 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-const baseURL = "http://localhost:5000/";
+const baseURL = "https://memories-cmp.herokuapp.com/";
 
 export const addPostAPI = async (post, googleAuth) => {
   try {

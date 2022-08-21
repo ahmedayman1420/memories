@@ -20,7 +20,7 @@ origins (domain, scheme, or port) other than its own from which a browser should
 */
 const userRouter = require("./modules/users/routes/user-routes");
 const postRouter = require("./modules/posts/routes/post-routes");
-const Connection = require("./Configration/configDb");
+const Connection = require("./Configration/configDB");
 /*
 //==// userRouter: is a router object that contains user module apis.
 //==// postRouter: is a router object that contains post module apis.
@@ -51,8 +51,8 @@ your server handles), and it will add onto your Express middleware stack.
 */
 
 // ====== --- ====== > Listen Server On Port < ====== --- ====== //
-app.listen(process.env.PROT, () => {
-  console.log(`App listening on port ${process.env.PROT} !`);
+app.listen(process.env.PORT, () => {
+  console.log(`App listening on port ${process.env.PORT} !`);
 });
 /*
 //==//The app.listen() function is used to bind and listen the connections on the specified host and port.
