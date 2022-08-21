@@ -12,6 +12,7 @@ const userPolicies = [
   postEndpoints.likePost,
   postEndpoints.searchPost,
   postEndpoints.getPost,
+  postEndpoints.addComment,
 ];
 const adminPolicies = [];
 const superAdminPolicies = [];

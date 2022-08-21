@@ -11,6 +11,7 @@ import {
   googleSigninAPI,
   searchPostAPI,
   getPostAPI,
+  addCommentAPI,
 } from "../../APIs/APIs";
 import {
   ADD_POST,
@@ -60,6 +61,14 @@ export const getPostsAction =
 
 export const getPostAction = (id, googleAuth) => async (dispatch) => {
   const res = await getPostAPI(id, googleAuth);
+  dispatch({
+    type: SET_POST_DETAILS,
+    payload: res.data.post,
+  });
+};
+
+export const addCommentAction = (comment, id, googleAuth) => async (dispatch) => {
+  const res = await addCommentAPI(comment, id, googleAuth);
   dispatch({
     type: SET_POST_DETAILS,
     payload: res.data.post,

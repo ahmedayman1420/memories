@@ -3,6 +3,7 @@ import {
   ERROR_EDIT_POST,
   ERROR_RESET,
   ERROR_SEARCH_POST,
+  ERROR_SEND_COMMENT,
   ERROR_SIGNIN,
   ERROR_SIGNUP,
 } from "../Actions/actionStrings";
@@ -23,6 +24,9 @@ const errorReducer = (state = { value: false, message: "" }, action) => {
 
     case ERROR_SEARCH_POST:
       return { ...action.payload, type: "search" };
+
+    case ERROR_SEND_COMMENT:
+      return { ...action.payload, type: "comment" };
 
     case ERROR_RESET:
       return action.payload;

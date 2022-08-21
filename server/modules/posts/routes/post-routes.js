@@ -72,5 +72,13 @@ router.get(
   postFunctions.getPost
 );
 
+// add comment api
+router.post(
+  "/post/comment/:id",
+  validateRequest(postSchemas.addCommentSchema),
+  isAuthorized(postEndpoints.addComment),
+  postFunctions.addComment
+);
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = router;

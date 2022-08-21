@@ -153,3 +153,20 @@ export const googleSigninAPI = async (token) => {
     console.log(error);
   }
 };
+
+export const addCommentAPI = async (comment, id, googleAuth) => {
+  try {
+    const res = await axios.post(
+      `${baseURL}post/comment/${id}`,
+      { comment },
+      {
+        headers: {
+          authorization: `Bearer ${googleAuth.token}`,
+        },
+      }
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};

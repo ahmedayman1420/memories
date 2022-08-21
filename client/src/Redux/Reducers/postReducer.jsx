@@ -10,7 +10,7 @@ import {
 const postReducer = (state = [], action) => {
   switch (action.type) {
     case ADD_POST:
-      return [...state, action.payload];
+      return [action.payload, state[0]];
 
     case EDIT_POST:
       return state.map((obj) => {

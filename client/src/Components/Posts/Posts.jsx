@@ -6,6 +6,7 @@ import Post from "./Post/Post";
 import Pagination from "rc-pagination";
 
 function Posts() {
+  const posts = useSelector((state) => state.posts);
   const dispatch = useDispatch();
   const [waiting, setWaiting] = useState(true);
   let navigate = useNavigate();
@@ -72,49 +73,51 @@ function Posts() {
         <div>
           <Post />
           <div className="d-flex justify-content-center">
-            <Pagination
-              current={currentPage}
-              defaultPageSize={2}
-              pageSize={2}
-              total={postCount}
-              onChange={async (current, pageSize) => {
-                const params = new Proxy(
-                  new URLSearchParams(window.location.search),
-                  {
-                    get: (searchParams, prop) => searchParams.get(prop),
-                  }
-                );
-                setCurrentPage(current);
-                setWaiting(true);
-                window.scrollTo({
-                  top: 0,
-                  behavior: "smooth",
-                });
-                // ============ Handle two cases ============= //
-                if (location.pathname === "/posts") {
-                  await dispatch(getPostsAction(current));
-                  navigate(`/posts?page=${current}`, {
-                    replace: true,
-                  });
-                } else if (location.pathname === "/posts/search") {
-                  await dispatch(
-                    serachPostAction(
-                      params.titles,
-                      params.tags,
-                      googleAuth,
-                      current
-                    )
-                  );
-                  navigate(
-                    `/posts/search?titles=${params.titles}&tags=${params.tags}&page=${current}`,
+            {postCount > 2 && (
+              <Pagination
+                current={currentPage}
+                defaultPageSize={2}
+                pageSize={2}
+                total={postCount}
+                onChange={async (current, pageSize) => {
+                  const params = new Proxy(
+                    new URLSearchParams(window.location.search),
                     {
-                      replace: true,
+                      get: (searchParams, prop) => searchParams.get(prop),
                     }
                   );
-                }
-                setWaiting(false);
-              }}
-            />
+                  setCurrentPage(current);
+                  setWaiting(true);
+                  window.scrollTo({
+                    top: 0,
+                    behavior: "smooth",
+                  });
+                  // ============ Handle two cases ============= //
+                  if (location.pathname === "/posts") {
+                    await dispatch(getPostsAction(current));
+                    navigate(`/posts?page=${current}`, {
+                      replace: true,
+                    });
+                  } else if (location.pathname === "/posts/search") {
+                    await dispatch(
+                      serachPostAction(
+                        params.titles,
+                        params.tags,
+                        googleAuth,
+                        current
+                      )
+                    );
+                    navigate(
+                      `/posts/search?titles=${params.titles}&tags=${params.tags}&page=${current}`,
+                      {
+                        replace: true,
+                      }
+                    );
+                  }
+                  setWaiting(false);
+                }}
+              />
+            )}
           </div>
         </div>
       )}

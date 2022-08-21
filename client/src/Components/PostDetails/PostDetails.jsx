@@ -3,21 +3,37 @@ import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getPostAction, serachPostAction } from "../../Redux/Actions/actions";
+import {
+  addCommentAction,
+  errorResetAction,
+  getPostAction,
+  serachPostAction,
+  unexpectedErrorAction,
+} from "../../Redux/Actions/actions";
 import { useParams } from "react-router-dom";
 import moment from "moment";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import { ERROR_SEND_COMMENT } from "../../Redux/Actions/actionStrings";
+import Alert from "react-bootstrap/Alert";
+import { useRef } from "react";
 
 function PostDetails() {
   const dispatch = useDispatch();
+  const error = useSelector((state) => state.error);
   const postDetails = useSelector((state) => state.postDetails);
   const memoryProfile = JSON.parse(localStorage.getItem("memoryProfile"));
   const [waiting, setWaiting] = useState(true);
+  const [waitingBtn, setWaitingBtn] = useState(false);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState(postDetails.comments);
   let navigate = useNavigate();
+  const commentRef = useRef();
   const { id } = useParams();
   const posts = useSelector((state) => state.posts).filter((value) => {
     return value._id !== postDetails._id;
   });
-  console.log(posts);
+
   const fetchMyAPI = async () => {
     try {
       setWaiting(true);
@@ -30,18 +46,42 @@ function PostDetails() {
 
   useEffect(() => {
     const func = async () => {
+      setComments(postDetails.comments);
       setWaiting(true);
       await dispatch(
-        serachPostAction(["hi"], postDetails.tags, memoryProfile, 1)
+        serachPostAction(postDetails.tags, postDetails.tags, memoryProfile, 1)
       );
       if (Object.keys(postDetails).length !== 0) setWaiting(false);
     };
     func();
-  }, [postDetails]);
+  }, [postDetails._id]);
 
   useEffect(() => {
     fetchMyAPI();
   }, [id]);
+
+  const handleComment = ({ target }) => {
+    setComment(target.value);
+  };
+
+  const sendComment = async (e) => {
+    e.preventDefault();
+    if (comment !== "" && !/^\s/.test(comment)) {
+      setComments([...comments, `${memoryProfile.user.name}: ${comment}`]);
+      setWaitingBtn(true);
+      await dispatch(errorResetAction());
+      await dispatch(
+        addCommentAction(
+          `${memoryProfile.user.name}: ${comment}`,
+          postDetails._id,
+          memoryProfile
+        )
+      );
+      commentRef.current.scrollIntoView({ behavior: "smooth" });
+      setWaitingBtn(false);
+      setComment("");
+    } else await dispatch(unexpectedErrorAction(ERROR_SEND_COMMENT));
+  };
 
   return (
     <>
@@ -70,7 +110,57 @@ function PostDetails() {
                       <h5>Realtime Chat - comming soon !</h5>
                     </ListGroup.Item>
                     <ListGroup.Item>
-                      <h5>Comments - comming soon !</h5>
+                      <div className="row justify-content-between">
+                        <div className="col-md-6">
+                          <Card>
+                            <Card.Title>
+                              <h5>Comments</h5>
+                            </Card.Title>
+                            <Card.Body>
+                              <div
+                                className="comments overflow-auto"
+                                style={{ height: "100px" }}
+                              >
+                                {comments.map((c, i) => {
+                                  return <Card.Text key={i}>{c}</Card.Text>;
+                                })}
+                                <div ref={commentRef}></div>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </div>
+                        <div className="col-md-6">
+                          <h5>Write a comment</h5>
+                          <Form onSubmit={sendComment}>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="formBasicEmail"
+                            >
+                              <Form.Control
+                                onChange={handleComment}
+                                type="text"
+                                placeholder="Comment"
+                                value={comment}
+                              />
+                            </Form.Group>
+                            {error.value && error.type === "comment" && (
+                              <Alert variant="danger">
+                                <Alert.Heading>{error.message}</Alert.Heading>
+                              </Alert>
+                            )}
+                            <div className="text-center">
+                              <Button
+                                className="ml-auto"
+                                variant="primary"
+                                type="submit"
+                              >
+                                {waitingBtn && "Wait ..."}
+                                {!waitingBtn && "Comment"}
+                              </Button>
+                            </div>
+                          </Form>
+                        </div>
+                      </div>
                     </ListGroup.Item>
                   </ListGroup>
                 </div>

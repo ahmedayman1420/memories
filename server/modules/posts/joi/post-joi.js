@@ -109,6 +109,22 @@ const userJoi = {
       })
       .options({ allowUnknown: true }),
   },
+
+  addCommentSchema: {
+    params: joi.object().required().keys({
+      id: joi.string().required(),
+    }),
+    body: joi.object().required().keys({
+      comment: joi.string().required(),
+    }),
+    headers: joi
+      .object()
+      .required()
+      .keys({
+        authorization: joi.string().required(),
+      })
+      .options({ allowUnknown: true }),
+  },
 };
 
 /* ============= /// <==> Exports User Joi Validations <==> /// ============= */

@@ -43,6 +43,10 @@ function Post() {
                     src={post.file}
                     onClick={() => {
                       navigate(`/post/details/${post._id}`, { replace: true });
+                      window.scrollTo({
+                        top: 0,
+                        behavior: "smooth",
+                      });
                     }}
                   />
                   <Card.Body>

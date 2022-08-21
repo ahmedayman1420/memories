@@ -33,7 +33,7 @@ const addPost = async (req, res) => {
       await newPost.save();
       res
         .status(StatusCodes.CREATED)
-        .json({ Message: "Post created successfully", post: newPost });
+        .json({ message: "Post created successfully", post: newPost });
     } else
       res.status(StatusCodes.BAD_REQUEST).json({ message: "User not found" });
   } catch (error) {
@@ -94,7 +94,7 @@ const editPost = async (req, res) => {
             new: true,
           }
         );
-        res.status(StatusCodes.OK).json({ Message: "Success", post: data });
+        res.status(StatusCodes.OK).json({ message: "Success", post: data });
       } else
         res.status(StatusCodes.BAD_REQUEST).json({ message: "Not Post Owner" });
     } else
@@ -121,7 +121,7 @@ const deletePost = async (req, res) => {
         const data = await posts.findByIdAndDelete(id);
         res
           .status(StatusCodes.OK)
-          .json({ Message: "Post deleted successfully", post: data });
+          .json({ message: "Post deleted successfully", post: data });
       } else
         res.status(StatusCodes.BAD_REQUEST).json({ message: "Not Post Owner" });
     } else
@@ -162,15 +162,15 @@ const likePost = async (req, res) => {
         );
         res
           .status(StatusCodes.OK)
-          .json({ Message: "Post Liked successfully", post: data });
+          .json({ message: "Post Liked successfully", post: data });
       } else
         res
           .status(StatusCodes.BAD_REQUEST)
-          .json({ Message: "Post not found", post: "" });
+          .json({ message: "Post not found", post: "" });
     } else
       res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ Message: "User not found", post: "" });
+        .json({ message: "User not found", post: "" });
   } catch (error) {
     console.log({ error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
@@ -261,6 +261,49 @@ const getPost = async (req, res) => {
   }
 };
 
+/*
+//==// Add Comment: is the logic of '/post/comment/:id' api that used to add comment to specific post.
+the response of this function in success (data:post), in failure (show error message).
+*/
+
+const addComment = async (req, res) => {
+  try {
+    let { id } = req.params;
+    let { email } = req.decoded;
+    let { comment } = req.body;
+
+    const oldUser = await users.findOne({ email, isDeleted: false });
+    if (oldUser) {
+      const oldPost = await posts.findById(id);
+      if (oldPost) {
+        let comments = oldPost?.comments || [];
+        comments.push(comment);
+        const data = await posts.findByIdAndUpdate(
+          id,
+          {
+            comments,
+          },
+          {
+            new: true,
+          }
+        );
+        res
+          .status(StatusCodes.OK)
+          .json({ message: "Add Comment Success", post: data });
+      } else
+        res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ message: "Post not found", post: "" });
+    } else
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ message: "User not found", post: "" });
+  } catch (error) {
+    console.log({ error });
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error });
+  }
+};
+
 // ====== --- ====== > Export Module < ====== --- ====== //
 module.exports = {
   addPost,
@@ -270,4 +313,5 @@ module.exports = {
   likePost,
   searchPost,
   getPost,
+  addComment,
 };

@@ -9,6 +9,7 @@ export const ERROR_EDIT_POST = "ERROR_EDIT_POST";
 export const SEARCH_POST = "SEARCH_POST";
 export const ERROR_SIGNUP = "ERROR_SIGNUP";
 export const ERROR_SIGNIN = "ERROR_SIGNIN";
+export const ERROR_SEND_COMMENT = "ERROR_SEND_COMMENT";
 export const ERROR_RESET = "ERROR_RESET";
 export const EDIT_POST_ID = "EDIT_POST_ID";
 export const RESET_ID = "RESET_ID";
