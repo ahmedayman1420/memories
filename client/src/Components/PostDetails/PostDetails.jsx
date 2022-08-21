@@ -153,6 +153,9 @@ function PostDetails() {
                                 className="ml-auto"
                                 variant="primary"
                                 type="submit"
+                                disabled={
+                                  (waitingBtn && true) || (!waitingBtn && false)
+                                }
                               >
                                 {waitingBtn && "Wait ..."}
                                 {!waitingBtn && "Comment"}

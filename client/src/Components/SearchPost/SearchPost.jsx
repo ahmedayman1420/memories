@@ -50,10 +50,14 @@ function SearchPost() {
     });
 
     if (result) {
+      const titles = searchPost.titles.map((value, index) => {
+        return value.trim();
+      });
+      const tags = searchPost.tags.map((value, index) => {
+        return value.trim();
+      });
       await dispatch(errorResetAction());
-      await dispatch(
-        serachPostAction(searchPost.titles, searchPost.tags, googleAuth)
-      );
+      await dispatch(serachPostAction(titles, tags, googleAuth));
       navigate(
         `/posts/search?titles=${searchPost.titles}&tags=${
           searchPost.tags
@@ -123,13 +127,18 @@ function SearchPost() {
             onClick={(e) => {
               clearForm(e);
             }}
+            disabled={(waiting && true) || (!waiting && false)}
             className="mx-4"
             variant="danger"
             type="reset"
           >
             Clear
           </Button>
-          <Button variant="primary" type="submit">
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={(waiting && true) || (!waiting && false)}
+          >
             {!waiting && "Search"}
             {waiting && "wait ... "}
           </Button>

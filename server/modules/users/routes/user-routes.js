@@ -16,6 +16,11 @@ const isAuthorized = require("../../../Common/Middlewares/isAuthorized");
 // ====== --- ====== > User Routes < ====== --- ====== //
 
 // signup api
+router.get("/", (req, res) => {
+  res.send("Hello, CMP!");
+});
+
+// signup api
 router.post(
   "/user/signup",
   validateRequest(userSchemas.signupSchema),

@@ -51,7 +51,7 @@ const getPosts = async (req, res) => {
     let { page } = req.query;
     page = Number(page);
 
-    const limit = 2;
+    const limit = 10;
     let startIndex = (page - 1) * limit;
 
     const totalCount = await posts.countDocuments({});

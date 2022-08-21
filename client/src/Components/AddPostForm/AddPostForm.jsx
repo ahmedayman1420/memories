@@ -181,17 +181,26 @@ function AddPostForm() {
             className="mx-4"
             variant="danger"
             type="reset"
+            disabled={(waiting && true) || (!waiting && false)}
           >
             Clear
           </Button>
           {!editState && (
-            <Button variant="primary" type="submit">
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={(waiting && true) || (!waiting && false)}
+            >
               {!waiting && "Submit"}
               {waiting && "wait ... "}
             </Button>
           )}
           {editState && (
-            <Button variant="warning" type="submit">
+            <Button
+              variant="warning"
+              type="submit"
+              disabled={(waiting && true) || (!waiting && false)}
+            >
               {!waiting && "Edit"}
               {waiting && "wait ... "}
             </Button>

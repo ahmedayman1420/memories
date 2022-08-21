@@ -28,6 +28,7 @@ function Post() {
   const [deletedPostId, setdDletedPostId] = useState("");
   const [editedPostId, setdEditedPostId] = useState("");
   let navigate = useNavigate();
+  const postId = useSelector((state) => state.postId);
 
   return (
     <>
@@ -88,31 +89,32 @@ function Post() {
                         />
                         <span> {post.likeCount.length}</span>
                       </Card.Text>
-                      {post.creator === googleAuth.user._id && (
-                        <Card.Text>
-                          <span>
-                            {(!waitingDelete || deletedPostId !== post._id) &&
-                              "Delete "}
-                            {waitingDelete &&
-                              deletedPostId === post._id &&
-                              "Wait ... "}
-                          </span>
-                          <FontAwesomeIcon
-                            className={["text-danger", Style.icon].join(" ")}
-                            size="lg"
-                            icon={faTrashAlt}
-                            onClick={async () => {
-                              setWaitingDelete(true);
-                              setdDletedPostId(post._id);
-                              await dispatch(
-                                deletePostAction(post, googleAuth)
-                              );
-                              setdDletedPostId("");
-                              setWaitingDelete(false);
-                            }}
-                          />
-                        </Card.Text>
-                      )}
+                      {post.creator === googleAuth.user._id &&
+                        postId !== post._id && (
+                          <Card.Text>
+                            <span>
+                              {(!waitingDelete || deletedPostId !== post._id) &&
+                                "Delete "}
+                              {waitingDelete &&
+                                deletedPostId === post._id &&
+                                "Wait ... "}
+                            </span>
+                            <FontAwesomeIcon
+                              className={["text-danger", Style.icon].join(" ")}
+                              size="lg"
+                              icon={faTrashAlt}
+                              onClick={async () => {
+                                setWaitingDelete(true);
+                                setdDletedPostId(post._id);
+                                await dispatch(
+                                  deletePostAction(post, googleAuth)
+                                );
+                                setdDletedPostId("");
+                                setWaitingDelete(false);
+                              }}
+                            />
+                          </Card.Text>
+                        )}
                     </ListGroup.Item>
                   </ListGroup>
                   <Card.Body
@@ -120,16 +122,17 @@ function Post() {
                   >
                     <Card.Title className="d-flex justify-content-between align-items-center">
                       <Card.Title>{post.postName}</Card.Title>
-                      {post.creator === googleAuth.user._id && (
-                        <FontAwesomeIcon
-                          className={[Style.icon].join(" ")}
-                          size="lg"
-                          icon={faEllipsis}
-                          onClick={() => {
-                            dispatch(setEditPostIdAction(post._id));
-                          }}
-                        />
-                      )}
+                      {post.creator === googleAuth.user._id &&
+                        deletedPostId !== post._id && (
+                          <FontAwesomeIcon
+                            className={[Style.icon].join(" ")}
+                            size="lg"
+                            icon={faEllipsis}
+                            onClick={() => {
+                              dispatch(setEditPostIdAction(post._id));
+                            }}
+                          />
+                        )}
                     </Card.Title>
                     <Card.Text>{moment(post.createdAt).fromNow()}</Card.Text>
                   </Card.Body>

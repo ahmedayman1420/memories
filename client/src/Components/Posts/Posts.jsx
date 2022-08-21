@@ -73,11 +73,11 @@ function Posts() {
         <div>
           <Post />
           <div className="d-flex justify-content-center">
-            {postCount > 2 && (
+            {postCount > 10 && (
               <Pagination
                 current={currentPage}
-                defaultPageSize={2}
-                pageSize={2}
+                defaultPageSize={10}
+                pageSize={10}
                 total={postCount}
                 onChange={async (current, pageSize) => {
                   const params = new Proxy(
